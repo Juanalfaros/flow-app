@@ -4,6 +4,19 @@ Gestor de tareas tipo Asana/ClickUp para un equipo interno de hasta 15
 usuarios, corriendo 100% en tiers gratuitos de Cloudflare y Supabase.
 Nombre de trabajo interno: **nodo**.
 
+
+## Capturas
+
+![Inicio](docs/screenshots/inicio.png)
+
+| Tablero | Lista |
+| --- | --- |
+| ![Tablero](docs/screenshots/tablero.png) | ![Lista](docs/screenshots/lista.png) |
+| **Gantt** | **Calendario** |
+| ![Gantt](docs/screenshots/gantt.png) | ![Calendario](docs/screenshots/calendario.png) |
+
+*Datos de ejemplo.*
+
 ## Stack
 
 - **Vite + React 19 + TypeScript** — SPA estática, sin SSR (app detrás de
