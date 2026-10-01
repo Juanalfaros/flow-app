@@ -1,0 +1,62 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+.wrangler
+
+# Secrets del Worker para `wrangler dev` — incluye SUPABASE_SERVICE_ROLE_KEY,
+# que saltea RLS por completo. No lo cubría ningún patrón de acá (`*.local` no
+# matchea `.dev.vars`).
+.dev.vars
+.dev.vars.*
+
+# De donde Vite lee VITE_SUPABASE_URL/VITE_SUPABASE_ANON_KEY
+# (src/lib/supabase.ts) — igual que arriba, `*.local` matchea `.env.local`
+# pero no `.env` a secas. Las variables VITE_* son públicas por diseño (viajan
+# al bundle del cliente), así que el riesgo directo es bajo, pero el archivo
+# queda como un lugar cómodo donde alguien pegue algo que no lo es
+# (auditoría de seguridad 2026-09-16, S10). `!.env.example` si algún día se
+# quiere versionar una plantilla.
+.env
+.env.*
+!.env.example
+
+.tanstack
+
+# `src/routeTree.gen.ts` NO va acá, aunque sea generado.
+#
+# `pnpm build` corre `tsc -b` antes que vite, y el plugin que genera ese
+# archivo solo actúa durante vite. Sin el archivo versionado, un clon limpio
+# falla con ~30 errores de tipos de ruta antes de llegar a generarlo — le
+# pasaba a CI y a cualquiera que clonara el repo por primera vez.
+#
+# Es determinista (sale de la estructura de `src/routes`), así que el diff que
+# produce documenta cambios reales de rutas en vez de ser ruido.
+
+# `worker-configuration.d.ts` tampoco va acá, por lo mismo.
+#
+# Lo genera `pnpm exec wrangler types` a partir de wrangler.jsonc, y
+# `tsconfig.worker.json` lo necesita para tipar el runtime de Workers. Sin él
+# versionado, `tsc -b` de un clon limpio no encuentra ni `R2Bucket` ni
+# `ExportedHandler` — el mismo tropiezo que ya costó una corrida de CI con
+# routeTree.gen.ts. Regenerarlo al cambiar bindings.
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

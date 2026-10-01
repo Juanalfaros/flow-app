@@ -1,0 +1,600 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is([data-theme="dark"] *));
+
+:root {
+  --bg: #F8FAFC;
+  --surface: #FFFFFF;
+  --surface-alt: #F1F5F9;
+  --border: #E2E8F0;
+  --border-strong: #CBD5E1;
+
+  --text: #0F172A;
+  --text-secondary: #475569;
+  /* Era #94A3B8, que sobre --bg (#F8FAFC) daba 2.5:1 — por debajo del 4.5:1
+     que pide WCAG AA para texto normal, y hasta del 3:1 de texto grande. El
+     token se usa en ~157 lugares y no solo para adorno: contadores de columna,
+     placeholders, nombres de estado, el "Sin tareas" de los estados vacíos.
+     #64748B (slate-500, sigue la misma escala del resto de la paleta) da
+     4.55:1. Verificado con el inspector de accesibilidad de DevTools. */
+  --text-muted: #64748B;
+
+  /* Turquoise — el default. El acento es la ÚNICA familia de tokens que la
+     persona puede cambiar (profiles.accent_color, 0058_profile_preferences.sql),
+     así que se declara como `var(--accent-user-*, <default>)`: el hook
+     escribe solo la familia `--accent-user-*` en :root
+     (use-theme-preference.ts) y acá se resuelve.
+
+     El indirecto no es cosmético. Antes el hook pisaba `--accent`
+     directamente como estilo inline de <html>, y eso NO llegaba a los
+     subárboles con `.dark-scope` (tab bar móvil, hoja "Más", Sidebar de
+     escritorio): esa clase redeclara `--accent` SOBRE SÍ MISMA, y una
+     declaración propia le gana al valor heredado, venga de donde venga —
+     incluso de un inline. Resultado real, visto en captura: el FAB violeta
+     del acento elegido conviviendo con una tab bar turquesa. Con el
+     fallback, `.dark-scope` hereda `--accent-user-*` cuando existe y cae al
+     default oscuro cuando no. */
+  --accent: var(--accent-user, #28BDB0);
+  --accent-hover: var(--accent-user-hover, #1E988E);
+  --accent-soft: var(--accent-user-soft, #D4F8F5);
+  --accent-text-on-bg: var(--accent-user-text-on-bg, #16746C);
+  /* Texto sobre el accent SÓLIDO (botones, badges, panel de login) — no
+     viene dado por la paleta (esa solo cubre texto sobre --accent-soft).
+     #28BDB0/#40E0D0 son ambos bastante claros, blanco pierde contraste
+     en los dos modos, así que se resuelve con un teal casi negro fijo.
+     Con un acento elegido, `deriveAccentPalette` calcula blanco o negro
+     según su luminancia (src/lib/color.ts) — de ahí que también tenga
+     fallback. */
+  --accent-foreground: var(--accent-user-foreground, #062421);
+
+  /* Ámbar — acento secundario */
+  --accent-2: #F59E0B;
+  --accent-2-hover: #D97706;
+  --accent-2-bg: #FEF3C7;
+  --accent-2-text-on-bg: #92400E;
+
+  --success: #16A34A;
+  --success-bg: #DCFCE7;
+  --success-text: #15803D;
+
+  --danger: #E11D48;
+  --danger-bg: #FFE4E6;
+  --danger-text: #BE123C;
+
+  /* --warn ya se usaba en ConnectionStatusIndicator/TaskCard antes de
+     esta paleta — no hay un tono "warning" propio en la spec nueva, así
+     que toma el ámbar del acento secundario en vez de quedar huérfano.
+     `-bg`/`-text` se suman en el rediseño de Ajustes (2026-09-25): ya se
+     usaban como `bg-warn-bg`/`text-warn-text` en Bandeja (InboxPage.tsx) y
+     Reportes (ReportAttention/ReportPeople) sin existir — o sea que esas
+     clases no pintaban nada y el chip ámbar salía transparente con el
+     color de texto heredado. Mismo par que success/danger de arriba. */
+  --warn: #F59E0B;
+  --warn-bg: #FEF3C7;
+  --warn-text: #92400E;
+
+  /* Estados de tarea */
+  --status-todo: #334155;
+  --status-todo-bg: #F1F5F9;
+  --status-inprogress: #1D4ED8;
+  --status-inprogress-bg: #DBEAFE;
+  --status-inreview: #6D28D9;
+  --status-inreview-bg: #EDE9FE;
+  --status-done: #15803D;
+  --status-done-bg: #DCFCE7;
+  --status-blocked: #BE123C;
+  --status-blocked-bg: #FFE4E6;
+  /* Mismo ámbar que --accent-2 (acento secundario) — "Descartado" no
+     necesita un séptimo matiz propio, ya existe en la paleta. Decisión de
+     producto: "Cerrar con subtareas abiertas" (0080_dropped_status.sql). */
+  --status-dropped: #92400E;
+  --status-dropped-bg: #FEF3C7;
+
+  /* Paleta de etiquetas */
+  --tag-rojo: #EF4444;
+  --tag-naranja: #F97316;
+  --tag-ambar: #F59E0B;
+  --tag-lima: #84CC16;
+  --tag-verde: #10B981;
+  --tag-teal: #40E0D0;
+  --tag-celeste: #0284C7;
+  --tag-azul: #3B82F6;
+  --tag-violeta: #8B5CF6;
+  --tag-rosa: #EC4899;
+
+  --radius: 4px;
+  --shadow: 0 1px 2px rgb(15 23 42 / 0.06);
+
+  /* Radius/shadow de "superficie elevada" — deliberadamente separados de
+     --radius (4px, recto a propósito para controles: botones, inputs,
+     selects). Cards y paneles flotantes rompen esa regla adrede, así que
+     viven en su propia escala en vez de derivar de --radius. */
+  --radius-card: 12px;
+  --radius-panel: 20px;
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 1px rgb(15 23 42 / 0.03);
+  --shadow-panel: 0 2px 8px rgb(15 23 42 / 0.08), 0 1px 2px rgb(15 23 42 / 0.06);
+
+  color-scheme: light;
+
+  /* Alias de los semánticos de shadcn a nuestros tokens de marca — una
+     sola fuente de verdad, en vez de mantener dos paletas paralelas. */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--surface);
+  --popover-foreground: var(--text);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: var(--surface-alt);
+  --secondary-foreground: var(--text);
+  --muted: var(--surface-alt);
+  --muted-foreground: var(--text-muted);
+  --destructive: var(--danger);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--bg);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* El resaltado azul/gris que Android e iOS pintan solos encima de cada
+   elemento tocable llega ~100ms tarde, cubre el rectángulo entero (no el
+   radio de la fila) y usa un color que no sale de la paleta. Las filas y
+   botones táctiles traen su propio `active:bg-surface-alt` (ver
+   TaskRow.tsx, espacios.tsx, InboxPage.tsx, MobileTabBar.tsx), que sí
+   responde en el mismo frame del toque — sin esto se ven los dos
+   superpuestos. Mismo criterio que el prototipo móvil. */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Geist Variable', sans-serif;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-text-on-bg: var(--accent-text-on-bg);
+
+  --color-accent-2: var(--accent-2);
+  --color-accent-2-hover: var(--accent-2-hover);
+  --color-accent-2-bg: var(--accent-2-bg);
+  --color-accent-2-text-on-bg: var(--accent-2-text-on-bg);
+
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-success-text: var(--success-text);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-text: var(--danger-text);
+
+  --color-danger: var(--danger);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-text: var(--warn-text);
+
+  --color-status-todo: var(--status-todo);
+  --color-status-todo-bg: var(--status-todo-bg);
+  --color-status-inprogress: var(--status-inprogress);
+  --color-status-inprogress-bg: var(--status-inprogress-bg);
+  --color-status-inreview: var(--status-inreview);
+  --color-status-inreview-bg: var(--status-inreview-bg);
+  --color-status-done: var(--status-done);
+  --color-status-done-bg: var(--status-done-bg);
+  --color-status-blocked: var(--status-blocked);
+  --color-status-blocked-bg: var(--status-blocked-bg);
+  --color-status-dropped: var(--status-dropped);
+  --color-status-dropped-bg: var(--status-dropped-bg);
+
+  --color-tag-rojo: var(--tag-rojo);
+  --color-tag-naranja: var(--tag-naranja);
+  --color-tag-ambar: var(--tag-ambar);
+  --color-tag-lima: var(--tag-lima);
+  --color-tag-verde: var(--tag-verde);
+  --color-tag-teal: var(--tag-teal);
+  --color-tag-celeste: var(--tag-celeste);
+  --color-tag-azul: var(--tag-azul);
+  --color-tag-violeta: var(--tag-violeta);
+  --color-tag-rosa: var(--tag-rosa);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-card: var(--radius-card);
+  --radius-panel: var(--radius-panel);
+  --shadow-card: var(--shadow-card);
+  --shadow-panel: var(--shadow-panel);
+}
+
+/* Dark mode. Selector por atributo (data-theme), no por clase — así lo
+   pidió la paleta nueva; next-themes está configurado con
+   attribute="data-theme" para que coincida (ver __root.tsx).
+
+   Se redeclara TODO lo que declara :root, aunque el valor sea idéntico o
+   solo una alias — hay un bug real, encontrado probando esto, donde el
+   compilador de CSS de este proyecto fusiona :root/[data-theme=dark] en
+   un esquema light-dark() y, si un selector deja afuera alguna
+   propiedad confiando en que cascadee sola, esa propiedad queda pegada
+   en el valor claro. No hay atajo mientras eso pase — ver AppShell.tsx /
+   SplitScreenLayout.tsx para el otro lado de este mismo bug (el fallback
+   a nivel de componente con bg-bg/text-text). */
+/* .dark-scope: fuerza la paleta oscura en un subárbol puntual (p.ej. el
+   Sidebar, que debe verse oscuro aunque el resto de la app esté en modo
+   claro) sin depender del atributo global data-theme. Comparte declaración
+   con [data-theme="dark"] a propósito — ver el comentario de arriba sobre
+   por qué hay que redeclarar TODO: si alguna propiedad quedara afuera acá
+   pero sí en el otro selector, ese subárbol la heredaría en su valor claro. */
+[data-theme="dark"],
+.dark-scope {
+  /* Grafito puro (R=G=B, sin matiz azulado) en vez de la escala "slate"
+     de Tailwind — pedido explícito: el dark mode se sentía tinturado
+     de azul en vez de neutro. */
+  --bg: #0C0C0C;
+  --surface: #151515;
+  --surface-alt: #202020;
+  --border: #2F2F2F;
+  --border-strong: #434343;
+
+  --text: #FAFAFA;
+  --text-secondary: #A5A5A5;
+  /* Era #767676: 4.35:1 sobre --bg (#0C0C0C), apenas por debajo de AA.
+     #8A8A8A da 5.67:1 y se mantiene dentro de la escala de grafito neutro
+     (R=G=B) del resto del modo oscuro. */
+  --text-muted: #8A8A8A;
+
+  /* Mismo `var(--accent-user-*, <default>)` que el bloque claro — ver el
+     comentario largo allá arriba. Este selector incluye `.dark-scope`, que
+     es justamente donde el acento elegido no llegaba. */
+  --accent: var(--accent-user, #40E0D0);
+  --accent-hover: var(--accent-user-hover, #55E6D8);
+  /* `-soft-on-dark`, no `-soft`: el segundo lo deriva
+     `deriveAccentPalette` mezclando 85% BLANCO, correcto sobre una página
+     clara y un bloque casi blanco sobre grafito — se vería en el riel del
+     Sidebar, que pinta el módulo activo con `bg-accent-soft`. */
+  --accent-soft: var(--accent-user-soft-on-dark, rgb(64 224 208 / 0.18));
+  /* `-on-dark`, no `-on-bg`: el segundo es el acento OSCURECIDO, pensado
+     para texto sobre una página clara — sobre grafito quedaba ilegible.
+     Ver AccentPalette en src/lib/color.ts. */
+  --accent-text-on-bg: var(--accent-user-text-on-dark, #A8F2EC);
+  --accent-foreground: var(--accent-user-foreground, #062421);
+
+  --accent-2: #FBBF24;
+  --accent-2-hover: #FDE68A;
+  --accent-2-bg: rgb(245 158 11 / 0.15);
+  --accent-2-text-on-bg: #FDE68A;
+
+  --success: #22C55E;
+  --success-bg: rgb(34 197 94 / 0.15);
+  --success-text: #86EFAC;
+
+  --danger: #F43F5E;
+  --danger-bg: rgb(244 63 94 / 0.15);
+  --danger-text: #FDA4AF;
+
+  --warn: #FBBF24;
+  --warn-bg: rgb(251 191 36 / 0.15);
+  --warn-text: #FDE68A;
+
+  --status-todo: #D6D6D6;
+  --status-todo-bg: #2B2B2B;
+  --status-inprogress: #3B82F6;
+  --status-inprogress-bg: rgb(59 130 246 / 0.18);
+  --status-inreview: #8B5CF6;
+  --status-inreview-bg: rgb(139 92 246 / 0.18);
+  --status-done: #22C55E;
+  --status-done-bg: rgb(34 197 94 / 0.18);
+  --status-blocked: #F43F5E;
+  --status-blocked-bg: rgb(244 63 94 / 0.18);
+  --status-dropped: #FDE68A;
+  --status-dropped-bg: rgb(245 158 11 / 0.15);
+
+  --tag-rojo: #F87171;
+  --tag-naranja: #FB923C;
+  --tag-ambar: #FBBF24;
+  --tag-lima: #A3E635;
+  --tag-verde: #34D399;
+  --tag-teal: #55E6D8;
+  --tag-celeste: #38BDF8;
+  --tag-azul: #60A5FA;
+  --tag-violeta: #A78BFA;
+  --tag-rosa: #F472B6;
+
+  --radius: 4px;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.24);
+  --radius-card: 12px;
+  --radius-panel: 20px;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.2), 0 1px 1px rgb(0 0 0 / 0.16);
+  --shadow-panel: 0 2px 8px rgb(0 0 0 / 0.32), 0 1px 2px rgb(0 0 0 / 0.24);
+
+  color-scheme: dark;
+
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--surface);
+  --popover-foreground: var(--text);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: var(--surface-alt);
+  --secondary-foreground: var(--text);
+  --muted: var(--surface-alt);
+  --muted-foreground: var(--text-muted);
+  --destructive: var(--danger);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Oculta la scrollbar nativa siempre, sin importar el ancho — para zonas
+   donde no queremos verla NUNCA (el cuerpo del Sidebar, el listado del
+   combobox de command.tsx): ahí el scroll es un detalle de layout, no
+   algo que la persona vaya a operar arrastrando la barra misma. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Antes `no-scrollbar` (arriba) también se usaba en las columnas del
+   tablero Kanban y en el Gantt pensando solo en mobile, donde el gesto de
+   swipe ya comunica que hay más contenido — pero eso de paso la ocultaba
+   también en desktop, donde SÍ hace falta como affordance visual y de
+   navegación con mouse/trackpad (pedido explícito: solo board.tsx/
+   GanttChart.tsx, el calendario — MonthView/WeekView — se queda con
+   `no-scrollbar` sin condición, igual que el Sidebar). Este utility solo
+   oculta por debajo del mismo umbral que board.tsx ya usa para pasar de
+   carrusel a grilla fija (`@min-[640px]:...`, container query contra el
+   `@container` de AppShell.tsx) — a partir de ahí queda la barra nativa,
+   con el estilo de tema de más abajo. */
+@utility scroll-x-list {
+  @container (width < 640px) {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+/* Scrollbars nativas con la paleta del workspace en vez del estilo crudo
+   del sistema operativo — pedido explícito: deben verse "del tema", con
+   el color de acento, y seguir el modo claro/oscuro. `--accent`/
+   `--border-strong` ya están redeclaradas para [data-theme="dark"] más
+   arriba, así que no hace falta repetir nada acá, cascadea solo. Dos
+   rutas porque no hay una sola propiedad estándar todavía: `scrollbar-*`
+   (Firefox) y los pseudo-elementos `::-webkit-scrollbar*` (Chrome/Edge/
+   Safari).
+
+   Dentro de `@layer base` a propósito — NO puede quedar como CSS suelto:
+   en Tailwind v4 las cascade layers le ganan a la especificidad, así que
+   un `*{...}` sin capa le gana a CUALQUIER utilidad (`.no-scrollbar`,
+   `.scroll-x-list`) sin importar cuánta especificidad tenga esa utilidad
+   — eso fue justo el bug real reportado (la barra "del tema" seguía
+   apareciendo en el Sidebar pese a `no-scrollbar`). `base` es la capa más
+   baja de las que declara Tailwind (`theme, base, components, utilities`),
+   así que las utilidades de `@utility` (que van a `utilities`) siguen
+   ganando acá adentro. */
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--accent) 45%, transparent) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent);
+  }
+}
+
+/* Transición al cambiar de tema — reemplaza una versión anterior que
+   animaba background-color/border-color/color/fill/stroke POR ELEMENTO
+   (`transition-colors` de cada uno, con la clase/capa de Tailwind que le
+   tocara). Con un árbol tan variado terminaba viéndose como que "unas
+   cosas cambian antes que otras" (reportado por el usuario) — ninguna
+   transición por elemento garantiza arrancar/terminar en el mismo
+   instante que las demás. Ahora usamos la View Transitions API
+   (use-theme-preference.ts, `document.startViewTransition`): un solo
+   crossfade de la pantalla entera, no N animaciones que puedan
+   desincronizarse. Esto solo afina la duración/curva de ESE crossfade;
+   respeta prefers-reduced-motion con el mismo criterio que el guard en
+   JS (sin la media query, el crossfade sigue existiendo pero con la
+   duración por defecto del browser, no instantáneo). */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 220ms;
+    animation-timing-function: ease;
+  }
+}
+
+/* Tiptap (TaskDescriptionEditor) — no usamos el plugin de tipografía de
+   Tailwind, así que el contenido rico (headings, listas, checklist, cita,
+   código, highlight, placeholder) necesita estilos manuales acá. */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3 {
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0.5em 0 0.25em;
+}
+.ProseMirror h1 {
+  font-size: 1.3em;
+}
+.ProseMirror h2 {
+  font-size: 1.15em;
+}
+.ProseMirror h3 {
+  font-size: 1.05em;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.25rem;
+  margin: 0.25em 0;
+}
+
+.ProseMirror blockquote {
+  border-left: 2px solid var(--border-strong);
+  padding-left: 0.75rem;
+  color: var(--text-secondary);
+  margin: 0.25em 0;
+}
+
+.ProseMirror code {
+  background: var(--surface-alt);
+  border-radius: 3px;
+  padding: 0.1em 0.3em;
+  font-size: 0.85em;
+}
+.ProseMirror pre {
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  overflow-x: auto;
+}
+.ProseMirror pre code {
+  background: none;
+  padding: 0;
+}
+
+.ProseMirror mark {
+  background-color: var(--accent-2-bg);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 0.15em;
+}
+
+.ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+.ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+.ProseMirror ul[data-type="taskList"] li > label {
+  margin-top: 0.2rem;
+  user-select: none;
+}
+.ProseMirror ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+.ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}

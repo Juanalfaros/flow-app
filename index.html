@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // Setea data-theme ANTES del primer paint — sin esto, el browser
+      // pinta con los defaults claros de :root mientras carga el bundle
+      // de React, y next-themes recién corrige el atributo al montar
+      // (ThemeProvider en __root.tsx), causando un flash claro/oscuro en
+      // cada carga. Misma key ('theme') y lógica que next-themes usa
+      // internamente (localStorage -> prefers-color-scheme si es 'system'
+      // o no hay valor guardado).
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('theme')
+          var theme =
+            stored && stored !== 'system'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+          document.documentElement.setAttribute('data-theme', theme)
+          // Mismo motivo que el flash de arriba, aplicado a la barra de
+          // estado/chrome del navegador: el <meta theme-color> de abajo
+          // queda fijo en el turquesa de marca (pensado para el splash de
+          // instalación) hasta que RootLayout monta y __root.tsx lo
+          // sincroniza con --bg de cada tema — recién ahí, con React ya
+          // cargado. Sin esto, cada carga en frío mostraba un parpadeo
+          // turquesa en esa franja antes de que el color real apareciera.
+          // Los valores son un duplicado intencional de THEME_COLOR en
+          // __root.tsx: ese archivo no puede correr antes del bundle, así
+          // que no hay forma de compartir la constante con este script.
+          var THEME_COLOR = { light: '#F8FAFC', dark: '#0C0C0C' }
+          var meta = document.querySelector('meta[name="theme-color"]')
+          if (meta) meta.setAttribute('content', THEME_COLOR[theme])
+        } catch (e) {}
+      })()
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- `viewport-fit=cover`: sin esto, `env(safe-area-inset-*)` siempre
+         vale 0 — el contenido nunca se entera de que hay una zona segura
+         que respetar (el indicador de home de iPhone, el notch). Primer
+         arreglo de la Fase 2 del rediseño de navegación (PWA instalada,
+         sin chrome de navegador): las barras fijas nuevas (tab bar móvil)
+         usan ese `env()` para no quedar tapadas. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#40e0d0" />
+    <title>Flow</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

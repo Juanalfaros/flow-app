@@ -1,0 +1,36 @@
+{
+  // El código del Worker no estaba en ningún tsconfig: `tsc -b` compilaba
+  // `src` y `vite.config.ts`, y nada más. Wrangler lo empaqueta con esbuild,
+  // que borra los tipos sin verificarlos — así que `worker/*.ts` viajaba a
+  // producción sin un solo chequeo, incluyendo el intercambio de tokens de
+  // OAuth y la firma del `state`. Este proyecto cierra ese hueco.
+  //
+  // Los tipos del runtime salen de `worker-configuration.d.ts`, que genera
+  // `pnpm exec wrangler types` a partir de wrangler.jsonc. Hay que regenerarlo
+  // al cambiar bindings.
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.worker.tsbuildinfo",
+    "target": "es2023",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "types": [],
+
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "isolatedModules": true,
+    // `push.test.ts` corre con `node worker/push.test.ts` (type stripping
+    // nativo), y Node exige la extensión en el import. Permitirla acá deja
+    // el test dentro de `tsc -b` en vez de fuera del chequeo de tipos.
+    "allowImportingTsExtensions": true,
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["worker", "worker-configuration.d.ts"]
+}

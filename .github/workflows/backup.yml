@@ -1,0 +1,72 @@
+name: Nightly backup
+
+# Cron nocturno de pg_dump -> R2. No puede vivir en el Worker de
+# Cloudflare (worker/index.ts) como sugería una versión vieja del plan:
+# un Worker no puede spawnear pg_dump ni abrir una conexión Postgres
+# nativa. Necesita un runner real -> GitHub Actions.
+#
+# Setup manual pendiente (una sola vez, ver PLAN.md sección de riesgos):
+#   1. Habilitar R2 en el dashboard de Cloudflare (no se puede vía API).
+#   2. Crear el bucket "flow-backups" (o cambiar R2_BUCKET más abajo).
+#   3. Crear un R2 API token (R2 > Manage API tokens) con permiso Object
+#      Read & Write sobre ese bucket.
+#   4. Cargar 3 secrets en GitHub (Settings > Secrets and variables >
+#      Actions):
+#        SUPABASE_DB_URL       — connection string "Session pooler" (no
+#                                "Transaction pooler") desde Supabase
+#                                Dashboard > Project Settings > Database.
+#        R2_ACCESS_KEY_ID      — del token R2 creado en el paso 3.
+#        R2_SECRET_ACCESS_KEY  — ídem.
+#   5. (Opcional) Regla de lifecycle en el bucket para expirar backups
+#      viejos (ej. 30 días) desde el dashboard de R2 — más simple que
+#      scriptear el borrado acá.
+
+on:
+  schedule:
+    # 07:00 UTC — madrugada en Chile (UTC-3/-4 según horario de verano).
+    - cron: '0 7 * * *'
+  workflow_dispatch: {}
+
+env:
+  R2_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  R2_BUCKET: flow-backups
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      # `apt-get install postgresql-client` a secas instala lo que trae el
+      # repo por defecto de Ubuntu (16.x en ubuntu-latest) — pero el proyecto
+      # real corre Postgres 17.6, y `pg_dump` se niega a volcar un servidor
+      # más nuevo que su propia versión ("aborting because of server version
+      # mismatch"). El script oficial de apt.postgresql.org agrega el repo
+      # correcto para la versión de Ubuntu que sea (no hace falta hardcodear
+      # el codename) y deja instalar la versión de cliente que haga falta.
+      - name: Install postgresql-client 17
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y postgresql-client-17
+
+      # Path completo, no `pg_dump` a secas: el runner de ubuntu-latest ya
+      # trae un `pg_dump` 16 preinstalado en `/usr/bin` por fuera del sistema
+      # de alternatives de postgresql-common, así que instalar el paquete 17
+      # (arriba) no alcanza para que el comando sin versionar apunte al
+      # nuevo — se verificó en un run real que seguía resolviendo al 16
+      # viejo. El paquete de Debian/Ubuntu siempre instala en
+      # `/usr/lib/postgresql/<versión>/bin/`, ese path no depende de qué
+      # haya quedado en el PATH.
+      - name: Dump database
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: /usr/lib/postgresql/17/bin/pg_dump "$SUPABASE_DB_URL" --format=custom --no-owner --no-privileges --file=backup.dump
+
+      - name: Upload to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+        run: |
+          aws s3 cp backup.dump "s3://${R2_BUCKET}/flow-$(date -u +%F).dump" \
+            --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"

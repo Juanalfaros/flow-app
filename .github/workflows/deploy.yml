@@ -1,0 +1,117 @@
+name: Deploy
+
+# Deploy automático a Cloudflare Workers en cada push a `main`.
+#
+# Hasta ahora el deploy era manual (`pnpm build && wrangler deploy`), y eso ya
+# causó el problema que este workflow evita: código pusheado a GitHub que nunca
+# llegó a producción, sin nada que avisara de la diferencia.
+#
+# Setup manual pendiente (una sola vez):
+#   1. Cloudflare Dashboard > My Profile > API Tokens > Create Token.
+#   2. Plantilla "Edit Cloudflare Workers" (necesita Workers Scripts:Edit y
+#      Workers R2 Storage:Edit, porque el Worker declara un binding de R2).
+#   3. Cargar el token en GitHub > Settings > Secrets and variables > Actions
+#      como `CLOUDFLARE_API_TOKEN`.
+#
+# `SUPABASE_DB_URL` ya existe como secret — lo usa backup.yml.
+#
+# `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` también deben existir como
+# secrets (mismos valores que .env.local, no versionado) — Vite los incrusta
+# en el bundle en build-time, así que sin ellos acá el deploy compila
+# "bien" pero el bundle queda sin URL/key de Supabase y el Worker publicado
+# revienta al cargar con "Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY".
+
+on:
+  push:
+    branches: [main]
+    # Un commit que solo toca documentación no cambia el bundle. Se ignora
+    # para no gastar minutos de Actions en un deploy idéntico al anterior.
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch: {}
+
+concurrency:
+  # Dos pushes seguidos no deben desplegarse en paralelo: el orden de llegada
+  # a Cloudflare no está garantizado y el segundo podría quedar pisado por el
+  # primero. `cancel-in-progress` descarta el deploy viejo, que ya es obsoleto.
+  group: deploy-main
+  cancel-in-progress: true
+
+env:
+  # Cuenta de Cloudflare donde vive la zona del custom domain: Cloudflare
+  # exige que zona y Worker estén en la misma cuenta. Secret del repo, junto
+  # a CLOUDFLARE_API_TOKEN.
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.15.1
+
+      - uses: actions/setup-node@v4
+        with:
+          # 24 y no `latest`: es la LTS con la que se resuelve el lockfile, y
+          # fijarla evita que un cambio de default del runner rompa el build
+          # sin que nadie haya tocado el repo.
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # ============================================================
+      # Guarda: no desplegar código que necesita migraciones sin aplicar
+      # ============================================================
+      # Ya pasó una vez: se desplegó una UI que consultaba `node_access.node_id`
+      # contra un esquema que todavía tenía `space_id`, y esa pantalla quedó
+      # rota en producción. El código nuevo puede depender de columnas o RPCs
+      # que la base todavía no tiene.
+      #
+      # Las migraciones NO se aplican acá a propósito: correrlas sin nadie
+      # mirando es peor que un deploy desfasado — una migración mala sobre
+      # producción no tiene vuelta atrás automática. El workflow solo detiene
+      # el deploy; aplicarlas sigue siendo un acto deliberado con
+      # `pnpm exec supabase db push`.
+      #
+      # `psql` viene preinstalado en el runner. La versión (16) alcanza para un
+      # SELECT: el problema de versión que documenta backup.yml es exclusivo de
+      # `pg_dump`, que se niega a volcar un servidor más nuevo.
+      - name: Comprobar que no haya migraciones sin aplicar
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+
+          psql "$SUPABASE_DB_URL" -tAc \
+            'select version from supabase_migrations.schema_migrations' \
+            | sed '/^$/d' | sort > /tmp/applied.txt
+
+          # El CLI de Supabase guarda como `version` el prefijo numérico del
+          # nombre del archivo (`0034_project_acl_data.sql` -> `0034`).
+          ls supabase/migrations/*.sql | sed 's|.*/||; s|_.*||' | sort > /tmp/local.txt
+
+          pending=$(comm -23 /tmp/local.txt /tmp/applied.txt)
+
+          if [ -n "$pending" ]; then
+            echo "::error::Migraciones sin aplicar en el proyecto remoto: $(echo $pending | tr '\n' ' ')"
+            echo "Aplícalas con 'pnpm exec supabase db push' y vuelve a lanzar este workflow."
+            exit 1
+          fi
+
+          echo "Todas las migraciones locales están aplicadas."
+
+      # `pnpm build` corre `tsc -b` antes de vite, así que un error de tipos
+      # detiene el deploy — que es justamente lo que se quiere.
+      - name: Build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: pnpm build
+
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

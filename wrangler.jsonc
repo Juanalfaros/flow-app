@@ -1,0 +1,72 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "flow",
+  "compatibility_date": "2026-07-01",
+  // `mimetext` (worker/email-dispatch.ts, F5 #10) arrastra `mime-types`,
+  // que requiere el módulo nativo `path` de Node — sin este flag, el
+  // deploy falla al bundlear ("Could not resolve 'path'"). Confirmado
+  // real: el primer intento de deploy de esa fase falló exactamente así.
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "worker/index.ts",
+  // `account_id` no va acá: wrangler lo toma de la variable de entorno
+  // CLOUDFLARE_ACCOUNT_ID (o de `wrangler login`). La zona de `routes` tiene
+  // que estar en esa misma cuenta de Cloudflare.
+  "routes": [{ "pattern": "flow.zutra.cl", "custom_domain": true }],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  // Tres crons, discriminados por `event.cron` en worker/index.ts:
+  //   - cada minuto: barrido de Web Push (red de seguridad del Database
+  //     Webhook, ver worker/push-dispatch.ts). En régimen normal no
+  //     encuentra nada y cuesta una consulta.
+  //   - cada 3 días: keep-alive de Supabase free tier.
+  //   - cada hora en punto: recordatorio de vencimiento de Automatizaciones
+  //     (0063_automation_rules.sql, worker/automation-dispatch.ts) — este
+  //     repo no tiene pg_cron, así que la única pieza que no puede vivir
+  //     como trigger de Postgres corre acá — y resumen semanal por correo
+  //     (worker/digest-dispatch.ts). Antes corría una sola vez al día
+  //     (13:00 UTC); pasó a cada hora en el rediseño de Ajustes PR 3
+  //     (2026-09-25) para que "Día y hora del resumen"
+  //     (profiles.digest_day/digest_hour) se pueda respetar de verdad —
+  //     ambas funciones ya eran idempotentes, así que llamarlas 24x más
+  //     seguido es seguro, no duplica nada.
+  // Un minuto es el intervalo mínimo que admite Cloudflare.
+  "triggers": {
+    "crons": ["* * * * *", "0 6 */3 * *", "0 * * * *"]
+  },
+  "observability": {
+    "enabled": true
+  },
+  // Adjuntos de tareas (ver worker/attachments.ts, supabase/migrations/
+  // 0038_task_attachments.sql). Requiere R2 habilitado en el dashboard de
+  // Cloudflare y el bucket creado a mano antes del primer deploy — no se
+  // puede vía API (mismo bloqueo ya documentado en
+  // .github/workflows/backup.yml para el bucket de backups):
+  //   1. Habilitar R2 en el dashboard de Cloudflare.
+  //   2. `pnpm exec wrangler r2 bucket create flow-attachments`
+  // Sin esto, el deploy falla al referenciar un bucket que no existe.
+  "r2_buckets": [
+    { "binding": "ATTACHMENTS", "bucket_name": "flow-attachments" }
+  ],
+  // Fallback de email para notificaciones (F5 #10, worker/email-dispatch.ts)
+  // — la de menor prioridad de todo el plan, solo entra a tallar cuando la
+  // persona no tiene ningún dispositivo con Web Push activo. Mismo bloqueo
+  // que R2 arriba, uno más: el dominio "from" tiene que estar dado de alta
+  // en Cloudflare Email Sending antes del primer envío — no se puede vía
+  // API con el token que usa este repo (permiso `email` no incluido, visto
+  // al intentarlo: "Unauthorized [code: 2036]" en `wrangler email sending
+  // list`). Setup pendiente, una sola vez:
+  //   1. `pnpm exec wrangler email sending enable zutra.cl` (con un
+  //      token/login que sí tenga el scope de Email), o hacerlo desde el
+  //      dashboard de Cloudflare (Email > Email Sending).
+  //   2. Confirmar los registros DNS que pida (SPF/DKIM) — la zona ya vive
+  //      en Cloudflare, así que se agregan solos si se hace desde el
+  //      dashboard.
+  // Sin el dominio dado de alta, el envío falla (el binding existe, pero
+  // Cloudflare rechaza el "from") — sendNotificationEmail() atrapa ese
+  // error y no rompe nada más, mismo criterio "silencioso" que Push sin
+  // VAPID.
+  "send_email": [{ "name": "EMAIL" }]
+}

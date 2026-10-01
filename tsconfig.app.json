@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "paths": { "@/*": ["./src/*"] },
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "esnext",
+    "types": ["vite/client", "@serwist/vite/typings"],
+    "allowArbitraryExtensions": true,
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    // `strict` nunca había estado activado: ni acá ni en el tsconfig.json base,
+    // así que todo el proyecto compilaba con strictNullChecks y noImplicitAny
+    // apagados — los `| null` de los tipos generados de Supabase nunca se
+    // verificaban de verdad. El código ya cumplía (0 errores al medirlo), solo
+    // faltaba declararlo.
+    "strict": true,
+    // Atrapa `array[0]` y `map[key]` sin comprobar que existan. Es el flag que
+    // encontró los 24 accesos por índice que se asumían presentes — varios en
+    // rutas donde un array vacío sí es posible.
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"],
+  "exclude": ["src/sw.ts"]
+}

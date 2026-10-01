@@ -1,0 +1,11 @@
+-- 0070_drop_redundant_hidden_nodes_index.sql — limpieza menor de la
+-- auditoría de seguridad/bugs (2026-09-09), Fase 6.
+--
+-- idx_hidden_nodes_user_id (0060_hidden_nodes.sql) es redundante: la PK
+-- `(user_id, node_id)` ya es, en sí misma, un índice sobre (user_id,
+-- node_id) — cualquier consulta que filtre solo por `user_id` (el único
+-- patrón de acceso real de esta tabla, ver hiddenNodesQueryOptions) ya la
+-- usa igual de bien que un índice de una sola columna. El índice extra
+-- no acelera nada, solo duplica el costo de mantenimiento en cada
+-- insert/delete.
+drop index if exists public.idx_hidden_nodes_user_id;
