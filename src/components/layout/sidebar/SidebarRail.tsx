@@ -1,10 +1,11 @@
 import { useState, type ReactNode } from 'react'
 import { Link, useMatchRoute } from '@tanstack/react-router'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { Search01Icon } from '@hugeicons/core-free-icons'
+import { Search01Icon, Shield01Icon } from '@hugeicons/core-free-icons'
 import { useCurrentWorkspace } from '@/features/workspace/queries'
 import { useUnreadNotificationsCount } from '@/features/notifications/queries'
 import { useSession } from '@/features/auth/queries'
+import { useIsPlatformAdmin } from '@/features/admin/queries'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { MOD_KEY_HINT } from '@/lib/platform'
@@ -26,6 +27,8 @@ export function SidebarRail({ activeModule, onSelectModule, collapsed, onNavigat
   const { workspace } = useCurrentWorkspace()
   const { data: session } = useSession()
   const { data: unreadCount } = useUnreadNotificationsCount(session?.user.id)
+  const isPlatformAdmin = useIsPlatformAdmin()
+  const matchRoute = useMatchRoute()
   const [openFlyout, setOpenFlyout] = useState<ModuleId | null>(null)
 
   function handleModuleClick(id: ModuleId) {
@@ -98,6 +101,30 @@ export function SidebarRail({ activeModule, onSelectModule, collapsed, onNavigat
       <div className="flex-1" />
 
       <div className="my-1 h-px w-5 shrink-0 bg-border" />
+
+      {/* Administración de plataforma (0095): solo el super admin. Es un
+          enlace directo y no un módulo con panel — no tiene árbol ni
+          subsecciones, es una sola pantalla. */}
+      {isPlatformAdmin && (
+        <RailTooltip label="Administración">
+          <Link
+            to="/admin"
+            onClick={onNavigate}
+            aria-label="Administración"
+            className={cn(
+              'relative flex size-9 shrink-0 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface-alt hover:text-text',
+              matchRoute({ to: '/admin' }) && 'text-accent',
+            )}
+            style={
+              matchRoute({ to: '/admin' })
+                ? { backgroundColor: 'var(--rail-active-bg, var(--accent-soft))', color: 'var(--rail-active-fg, var(--accent))' }
+                : undefined
+            }
+          >
+            <HugeiconsIcon icon={Shield01Icon} className="size-4" />
+          </Link>
+        </RailTooltip>
+      )}
 
       <RailButton
         mod={BOTTOM_MODULE}

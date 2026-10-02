@@ -23,6 +23,7 @@ import {
 } from '@hugeicons/core-free-icons'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { signOut } from '@/features/auth/api'
+import { useIsPlatformAdmin } from '@/features/admin/queries'
 import { useThemePreference } from '@/features/profile/use-theme-preference'
 import { cn } from '@/lib/utils'
 
@@ -43,7 +44,7 @@ interface MoreItem {
   icon: IconSvgElement
   /** Las rutas de /profile viajan como `search`, no como path — son
    * pestañas del mismo componente (ver AjustesPanel.tsx). */
-  to: '/calendario' | '/timeline' | '/tabla' | '/reportes' | '/equipo/personas' | '/equipo/equipos' | '/equipo/organigrama' | '/plantillas' | '/campos-personalizados' | '/archivados' | '/profile'
+  to: '/calendario' | '/timeline' | '/tabla' | '/reportes' | '/equipo/personas' | '/equipo/equipos' | '/equipo/organigrama' | '/plantillas' | '/campos-personalizados' | '/archivados' | '/profile' | '/admin'
   search?: { tab: 'perfil' | 'seguridad' | 'workspace' | 'notifications' | 'preferences' | 'integrations' }
 }
 
@@ -93,7 +94,12 @@ const GROUPS: MoreGroup[] = [
 /** Las rutas que hacen que la pestaña "Más" cuente como activa — se deriva
  * de los propios destinos de la hoja en vez de repetirlas a mano en
  * MobileTabBar.tsx (que era donde se olvidaban al agregar una). */
-export const MORE_ROUTES = GROUPS.flatMap((g) => g.items.map((i) => i.to))
+const ADMIN_GROUP: MoreGroup = {
+  heading: 'Plataforma',
+  items: [{ label: 'Administración', icon: Shield01Icon, to: '/admin' }],
+}
+
+export const MORE_ROUTES = [...GROUPS, ADMIN_GROUP].flatMap((g) => g.items.map((i) => i.to))
 
 const rowClass =
   'flex min-h-13 w-full items-center gap-3 border-b border-border px-1 text-left transition-colors active:bg-surface-alt'
@@ -101,6 +107,8 @@ const rowClass =
 export function MobileMoreSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const matchRoute = useMatchRoute()
   const { resolvedTheme, setTheme } = useThemePreference()
+  const isPlatformAdmin = useIsPlatformAdmin()
+  const groups = isPlatformAdmin ? [...GROUPS, ADMIN_GROUP] : GROUPS
   const isDark = resolvedTheme === 'dark'
   const queryClient = useQueryClient()
   const signOutMutation = useMutation({
@@ -136,7 +144,7 @@ export function MobileMoreSheet({ open, onOpenChange }: { open: boolean; onOpenC
           <span className="mx-auto block h-1 w-9 rounded-full bg-border-strong" aria-hidden="true" />
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-          {GROUPS.map((group) => (
+          {groups.map((group) => (
             <div key={group.heading}>
               <p className="mt-4 mb-1 px-1 text-[11px] font-medium tracking-wider text-text-muted uppercase">
                 {group.heading}
