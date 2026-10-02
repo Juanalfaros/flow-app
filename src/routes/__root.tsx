@@ -49,7 +49,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   ),
 })
 
-// `#40e0d0` (el acento turquesa) fijo en index.html/manifest.webmanifest
+// `#FF0055` (el acento magenta; antes `#40e0d0` turquesa) fijo en index.html/manifest.webmanifest
 // pintaba la barra de estado de iOS/Android de ese color en tema claro
 // (auditoría de la Fase 2 del rediseño de navegación) — ninguna otra
 // superficie de la app usa el acento como fondo sólido de página. Acá se

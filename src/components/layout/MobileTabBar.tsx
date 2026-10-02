@@ -58,7 +58,7 @@ export function MobileTabBar() {
           suyo después de probar la variante que seguía el tema (el
           prototipo la pinta clara en tema claro; acá gana la coherencia
           con el riel de escritorio). Todo lo de adentro hereda la paleta
-          oscura, así que `text-accent` (#40E0D0 sobre #151515) rinde ~11:1
+          oscura, así que `text-accent` (hoy #FF0055 sobre #151515, ~4.7:1; con el turquesa anterior #40E0D0 eran ~11:1)
           y no hace falta el token `-on-bg`. */}
       <nav
         aria-label="Navegación principal"

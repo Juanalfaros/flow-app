@@ -22,11 +22,11 @@
           document.documentElement.setAttribute('data-theme', theme)
           // Mismo motivo que el flash de arriba, aplicado a la barra de
           // estado/chrome del navegador: el <meta theme-color> de abajo
-          // queda fijo en el turquesa de marca (pensado para el splash de
+          // queda fijo en el color de marca (magenta; antes turquesa #40e0d0) (pensado para el splash de
           // instalación) hasta que RootLayout monta y __root.tsx lo
           // sincroniza con --bg de cada tema — recién ahí, con React ya
           // cargado. Sin esto, cada carga en frío mostraba un parpadeo
-          // turquesa en esa franja antes de que el color real apareciera.
+          // de color de marca en esa franja antes de que el color real apareciera.
           // Los valores son un duplicado intencional de THEME_COLOR en
           // __root.tsx: ese archivo no puede correr antes del bundle, así
           // que no hay forma de compartir la constante con este script.
@@ -46,7 +46,7 @@
          sin chrome de navegador): las barras fijas nuevas (tab bar móvil)
          usan ese `env()` para no quedar tapadas. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#40e0d0" />
+    <meta name="theme-color" content="#FF0055" />
     <title>Flow</title>
   </head>
   <body>

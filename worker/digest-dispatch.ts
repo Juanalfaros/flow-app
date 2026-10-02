@@ -216,7 +216,7 @@ async function sendDigestForUser(
         : 'no tienes tareas por vencer esta semana. Tareas abiertas asignadas:'
     }</p>
     <ul style="margin:0 0 16px;padding:0;">${htmlItems}</ul>
-    ${overflow > 0 ? `<p style="font-size:12.5px;color:#64748B;margin:0 0 16px;">...y ${overflow} más. <a href="${APP_ORIGIN}/mis-tareas" style="color:#1E988E;">Ver todas</a>.</p>` : ''}
+    ${overflow > 0 ? `<p style="font-size:12.5px;color:#64748B;margin:0 0 16px;">...y ${overflow} más. <a href="${APP_ORIGIN}/mis-tareas" style="color:#D6004C;">Ver todas</a>.</p>` : ''}
     ${renderEmailButton('Ver "Mis tareas"', `${APP_ORIGIN}/mis-tareas`, '#F59E0B')}
   `
   const htmlBody = renderEmailShell(content, 'Desactivar el resumen semanal')

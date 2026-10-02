@@ -9,7 +9,7 @@ del build (`vite.config.ts`'s `globPatterns` barre `public/` completo).
 - **`iso-favicon.svg`** — isotipo suelto, sin fondo (viewBox alto,
   262.86×372.94). Se usa tal cual como `public/favicon.svg`.
 - **`iso-flow.svg`** — el mismo isotipo sobre un cuadrado sólido color
-  marca (`#40e0d0`, viewBox 606×606). Fuente de los tres PNG de
+  marca (`#FF0055` magenta; antes `#40e0d0` turquesa, viewBox 606×606). Fuente de los tres PNG de
   `public/icons/` (`icon-192.png`, `icon-512.png`,
   `icon-maskable-512.png`) — el fondo cubre todo el cuadrado, así que
   sirve tal cual tanto para `purpose: "any"` como `"maskable"` sin

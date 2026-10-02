@@ -22,7 +22,15 @@
      4.55:1. Verificado con el inspector de accesibilidad de DevTools. */
   --text-muted: #64748B;
 
-  /* Turquoise — el default. El acento es la ÚNICA familia de tokens que la
+  /* Magenta — el default (2026-10-02). Antes era turquesa; los valores
+     anteriores quedan comentados al lado de cada token para poder volver:
+       claro:  accent #28BDB0 · hover #1E988E · soft #D4F8F5 · text-on-bg #16746C · foreground #062421
+       oscuro: accent #40E0D0 · hover #55E6D8 · soft rgb(64 224 208 / 0.18) · text #A8F2EC · foreground #062421
+     Magenta de marca #FF0055; hover #D6004C (par dado por el diseño). El resto
+     sale de deriveAccentPalette (src/lib/color.ts) para que el default coincida
+     con lo que se calcularía si la persona eligiera ese mismo color.
+
+     El acento es la ÚNICA familia de tokens que la
      persona puede cambiar (profiles.accent_color, 0058_profile_preferences.sql),
      así que se declara como `var(--accent-user-*, <default>)`: el hook
      escribe solo la familia `--accent-user-*` en :root
@@ -37,18 +45,21 @@
      del acento elegido conviviendo con una tab bar turquesa. Con el
      fallback, `.dark-scope` hereda `--accent-user-*` cuando existe y cae al
      default oscuro cuando no. */
-  --accent: var(--accent-user, #28BDB0);
-  --accent-hover: var(--accent-user-hover, #1E988E);
-  --accent-soft: var(--accent-user-soft, #D4F8F5);
-  --accent-text-on-bg: var(--accent-user-text-on-bg, #16746C);
+  --accent: var(--accent-user, #FF0055); /* antes #28BDB0 */
+  --accent-hover: var(--accent-user-hover, #D6004C); /* antes #1E988E */
+  --accent-soft: var(--accent-user-soft, #FFD9E6); /* antes #D4F8F5 */
+  --accent-text-on-bg: var(--accent-user-text-on-bg, #A60037); /* antes #16746C */
   /* Texto sobre el accent SÓLIDO (botones, badges, panel de login) — no
      viene dado por la paleta (esa solo cubre texto sobre --accent-soft).
-     #28BDB0/#40E0D0 son ambos bastante claros, blanco pierde contraste
-     en los dos modos, así que se resuelve con un teal casi negro fijo.
+     Con el turquesa anterior (#28BDB0/#40E0D0, claros) el blanco perdía
+     contraste y se usaba un teal casi negro (#062421). El magenta #FF0055 es
+     más oscuro: blanco da 3.9:1 (aceptable para texto grande/en negrita de
+     botones, justo para texto chico) y negro daría 5.4:1; se eligió blanco
+     por convención de marca. Si hace falta más contraste, volver a negro.
      Con un acento elegido, `deriveAccentPalette` calcula blanco o negro
      según su luminancia (src/lib/color.ts) — de ahí que también tenga
      fallback. */
-  --accent-foreground: var(--accent-user-foreground, #062421);
+  --accent-foreground: var(--accent-user-foreground, #FFFFFF); /* antes #062421 (teal casi negro) */
 
   /* Ámbar — acento secundario */
   --accent-2: #F59E0B;
@@ -309,18 +320,18 @@ body {
   /* Mismo `var(--accent-user-*, <default>)` que el bloque claro — ver el
      comentario largo allá arriba. Este selector incluye `.dark-scope`, que
      es justamente donde el acento elegido no llegaba. */
-  --accent: var(--accent-user, #40E0D0);
-  --accent-hover: var(--accent-user-hover, #55E6D8);
+  --accent: var(--accent-user, #FF0055); /* antes #40E0D0 */
+  --accent-hover: var(--accent-user-hover, #D6004C); /* antes #55E6D8 */
   /* `-soft-on-dark`, no `-soft`: el segundo lo deriva
      `deriveAccentPalette` mezclando 85% BLANCO, correcto sobre una página
      clara y un bloque casi blanco sobre grafito — se vería en el riel del
      Sidebar, que pinta el módulo activo con `bg-accent-soft`. */
-  --accent-soft: var(--accent-user-soft-on-dark, rgb(64 224 208 / 0.18));
+  --accent-soft: var(--accent-user-soft-on-dark, rgb(255 0 85 / 0.18)); /* antes rgb(64 224 208 / 0.18) */
   /* `-on-dark`, no `-on-bg`: el segundo es el acento OSCURECIDO, pensado
      para texto sobre una página clara — sobre grafito quedaba ilegible.
      Ver AccentPalette en src/lib/color.ts. */
-  --accent-text-on-bg: var(--accent-user-text-on-dark, #A8F2EC);
-  --accent-foreground: var(--accent-user-foreground, #062421);
+  --accent-text-on-bg: var(--accent-user-text-on-dark, #FF73A2); /* antes #A8F2EC */
+  --accent-foreground: var(--accent-user-foreground, #FFFFFF); /* antes #062421 */
 
   --accent-2: #FBBF24;
   --accent-2-hover: #FDE68A;

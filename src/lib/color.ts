@@ -131,10 +131,15 @@ export interface AccentPalette {
   accentForeground: string
 }
 
+// Hover de marca: el magenta por defecto trae un par definido por diseño
+// (#FF0055 → #D6004C) que no es exactamente lo que daría `darken(0.12)`
+// (#E0004B). Cualquier otro color sigue la fórmula.
+const BRAND_HOVER: Record<string, string> = { '#FF0055': '#D6004C' }
+
 export function deriveAccentPalette(hex: string): AccentPalette {
   return {
     accent: hex,
-    accentHover: darken(hex, 0.12),
+    accentHover: BRAND_HOVER[hex.toUpperCase()] ?? darken(hex, 0.12),
     accentSoft: lighten(hex, 0.85),
     accentSoftOnDark: rgba(hex, 0.18),
     accentTextOnBg: darken(hex, 0.35),

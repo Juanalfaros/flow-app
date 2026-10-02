@@ -1466,7 +1466,8 @@ const TASK_VIEW_MODE_OPTIONS: { value: TaskViewMode; label: string }[] = [
 // Con nombre, no solo el hex: un círculo de color sin etiqueta obliga a
 // adivinar (y no se puede describir por lectores de pantalla).
 const ACCENT_SWATCHES: { hex: string; label: string }[] = [
-  { hex: '#28BDB0', label: 'Turquesa' },
+  { hex: '#FF0055', label: 'Magenta' },
+  { hex: '#28BDB0', label: 'Turquesa' }, // era el default hasta 2026-10-02
   { hex: '#3B82F6', label: 'Azul' },
   { hex: '#8B5CF6', label: 'Violeta' },
   { hex: '#EC4899', label: 'Rosa' },

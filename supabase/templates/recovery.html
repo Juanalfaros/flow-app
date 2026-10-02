@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Restablece tu contraseña</title>
+</head>
+<body style="margin:0;padding:0;background:#EEF2F6;">
+<div style="background:#EEF2F6;padding:32px 16px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:460px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;font-family:Arial,Helvetica,sans-serif;">
+    <tr><td style="padding:24px 28px 0;">
+      <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+        <td style="vertical-align:middle;"><img src="https://flow.zutra.cl/email/isotipo.png" width="40" height="40" alt="Flow" style="display:block;border-radius:9px;border:0;"></td>
+        <td style="vertical-align:middle;padding-left:10px;font-size:17px;font-weight:800;color:#0F172A;">Flow<span style="color:#FF0055;">.</span></td>
+      </tr></table>
+    </td></tr>
+    <tr><td style="padding:26px 28px 28px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr><td style="padding:0 0 16px;"><img src="https://flow.zutra.cl/email/icon-recovery.png" width="48" height="48" alt="" style="display:block;border:0;"></td></tr>
+        <tr><td style="padding:0 0 10px;font-size:21px;line-height:1.25;font-weight:800;color:#0F172A;">Restablece tu contraseña</td></tr>
+        <tr><td style="padding:0 0 18px;font-size:14.5px;line-height:1.6;color:#334155;">Recibimos una solicitud para cambiar la contraseña de tu cuenta de <strong>Flow</strong>. El enlace es válido por un tiempo limitado.</td></tr>
+        <tr><td style="padding:8px 0 4px;"><a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#FF0055;color:#ffffff;font-weight:700;font-size:14px;text-decoration:none;padding:12px 22px;border-radius:8px;">Elegir una contraseña nueva</a></td></tr>
+          <tr><td style="padding:14px 0 0;font-size:11.5px;line-height:1.5;color:#94A3B8;">Si el botón no funciona, copia y pega este enlace en tu navegador:<br><a href="{{ .ConfirmationURL }}" style="color:#D6004C;word-break:break-all;">{{ .ConfirmationURL }}</a></td></tr>
+      </table>
+    </td></tr>
+    <tr><td style="padding:14px 28px;border-top:1px solid #E2E8F0;background:#FAFBFC;font-size:11.5px;line-height:1.5;color:#94A3B8;">
+      Si no esperabas este correo, puedes ignorarlo con tranquilidad. · <a href="https://flow.zutra.cl" style="color:#D6004C;text-decoration:none;">Flow</a>
+    </td></tr>
+  </table>
+</div>
+</body>
+</html>

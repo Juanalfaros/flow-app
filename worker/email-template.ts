@@ -43,11 +43,11 @@ export function renderEmailShell(contentHtml: string, footerLinkLabel: string): 
     <div style="background:#EEF2F6;padding:32px 16px;">
       <div style="max-width:420px;margin:0 auto;background:#ffffff;border-radius:10px;overflow:hidden;">
         <div style="padding:28px 26px 24px;font-family:Arial,Helvetica,sans-serif;">
-          <div style="font-size:15px;font-weight:800;color:#1E988E;margin:0 0 20px;">Flow<span style="color:#F59E0B;">.</span></div>
+          <div style="font-size:15px;font-weight:800;color:#D6004C;margin:0 0 20px;">Flow<span style="color:#F59E0B;">.</span></div>
           ${contentHtml}
         </div>
         <div style="padding:14px 26px;border-top:1px solid #E2E8F0;background:#FAFBFC;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#94A3B8;">
-          Flow · <a href="${APP_ORIGIN}/profile" style="color:#1E988E;text-decoration:none;">${footerLinkLabel}</a>
+          Flow · <a href="${APP_ORIGIN}/profile" style="color:#D6004C;text-decoration:none;">${footerLinkLabel}</a>
         </div>
       </div>
     </div>
