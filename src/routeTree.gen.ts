@@ -14,6 +14,7 @@ import { Route as AcceptInviteRouteImport } from './routes/accept-invite'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppArchivadosRouteImport } from './routes/_app/archivados'
 import { Route as AppBandejaRouteImport } from './routes/_app/bandeja'
 import { Route as AppCalendarioRouteImport } from './routes/_app/calendario'
@@ -66,6 +67,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppArchivadosRoute = AppArchivadosRouteImport.update({
@@ -220,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/equipo': typeof AppEquipoRouteRouteWithChildren
+  '/admin': typeof AppAdminRoute
   '/archivados': typeof AppArchivadosRoute
   '/bandeja': typeof AppBandejaRoute
   '/calendario': typeof AppCalendarioRoute
@@ -253,6 +260,7 @@ export interface FileRoutesByTo {
   '/accept-invite': typeof AcceptInviteRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AppAdminRoute
   '/archivados': typeof AppArchivadosRoute
   '/bandeja': typeof AppBandejaRoute
   '/calendario': typeof AppCalendarioRoute
@@ -290,6 +298,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_app/equipo': typeof AppEquipoRouteRouteWithChildren
+  '/_app/admin': typeof AppAdminRoute
   '/_app/archivados': typeof AppArchivadosRoute
   '/_app/bandeja': typeof AppBandejaRoute
   '/_app/calendario': typeof AppCalendarioRoute
@@ -328,6 +337,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/equipo'
+    | '/admin'
     | '/archivados'
     | '/bandeja'
     | '/calendario'
@@ -361,6 +371,7 @@ export interface FileRouteTypes {
     | '/accept-invite'
     | '/login'
     | '/reset-password'
+    | '/admin'
     | '/archivados'
     | '/bandeja'
     | '/calendario'
@@ -397,6 +408,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/_app/equipo'
+    | '/_app/admin'
     | '/_app/archivados'
     | '/_app/bandeja'
     | '/_app/calendario'
@@ -471,6 +483,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/admin': {
+      id: '/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/archivados': {
@@ -722,6 +741,7 @@ const AppPProjectIdRouteRouteWithChildren =
 
 interface AppRouteRouteChildren {
   AppEquipoRouteRoute: typeof AppEquipoRouteRouteWithChildren
+  AppAdminRoute: typeof AppAdminRoute
   AppArchivadosRoute: typeof AppArchivadosRoute
   AppBandejaRoute: typeof AppBandejaRoute
   AppCalendarioRoute: typeof AppCalendarioRoute
@@ -743,6 +763,7 @@ interface AppRouteRouteChildren {
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppEquipoRouteRoute: AppEquipoRouteRouteWithChildren,
+  AppAdminRoute: AppAdminRoute,
   AppArchivadosRoute: AppArchivadosRoute,
   AppBandejaRoute: AppBandejaRoute,
   AppCalendarioRoute: AppCalendarioRoute,

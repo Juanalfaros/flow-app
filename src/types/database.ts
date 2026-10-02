@@ -10,32 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+    PostgrestVersion: "14.18"
   }
   public: {
     Tables: {
@@ -808,6 +783,84 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      owner_invitations: {
+        Row: {
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string | null
+          max_workspaces: number
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          max_workspaces?: number
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          max_workspaces?: number
+          status?: string
+        }
+        Relationships: []
+      }
+      platform_admins: {
+        Row: {
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      platform_owners: {
+        Row: {
+          created_at: string
+          max_workspaces: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          max_workspaces?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          max_workspaces?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      platform_settings: {
+        Row: {
+          id: boolean
+          max_total_workspaces: number
+        }
+        Insert: {
+          id?: boolean
+          max_total_workspaces?: number
+        }
+        Update: {
+          id?: boolean
+          max_total_workspaces?: number
+        }
+        Relationships: []
       }
       presence_daily: {
         Row: {
@@ -1820,7 +1873,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_owner_invitations: { Args: never; Returns: undefined }
       accept_pending_invitations: { Args: never; Returns: undefined }
+      admin_delete_workspace: {
+        Args: { p_confirm_name: string; p_workspace_id: string }
+        Returns: undefined
+      }
+      admin_invite_owner: {
+        Args: { p_email: string; p_max_workspaces?: number }
+        Returns: string
+      }
+      admin_overview: { Args: never; Returns: Json }
+      admin_revoke_owner_invitation: {
+        Args: { p_id: string }
+        Returns: undefined
+      }
+      admin_set_owner_quota: {
+        Args: { p_max_workspaces: number; p_user_id: string }
+        Returns: undefined
+      }
+      admin_set_total_limit: { Args: { p_max: number }; Returns: undefined }
       admin_update_profile: {
         Args: {
           p_avatar_url: string
@@ -1837,6 +1909,7 @@ export type Database = {
         Returns: undefined
       }
       assert_member_of: { Args: { p_workspace_id: string }; Returns: undefined }
+      assert_platform_admin: { Args: never; Returns: undefined }
       calendar_feed_events: {
         Args: { p_token: string }
         Returns: {
@@ -1999,6 +2072,7 @@ export type Database = {
       }
       is_admin_of: { Args: { p_workspace_id: string }; Returns: boolean }
       is_member_of: { Args: { p_workspace_id: string }; Returns: boolean }
+      is_platform_admin: { Args: never; Returns: boolean }
       is_signup_open: { Args: never; Returns: boolean }
       manager_would_create_cycle: {
         Args: { p_manager_id: string; p_user_id: string }
@@ -2197,9 +2271,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },

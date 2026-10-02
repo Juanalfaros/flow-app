@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { Logout01Icon, UserCircleIcon } from '@hugeicons/core-free-icons'
+import { Logout01Icon, UserCircleIcon, Shield01Icon } from '@hugeicons/core-free-icons'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -13,12 +13,14 @@ import {
 import { signOut } from '@/features/auth/api'
 import { useSession } from '@/features/auth/queries'
 import { useProfile } from '@/features/profile/queries'
+import { useIsPlatformAdmin } from '@/features/admin/queries'
 import { initials } from '@/lib/initials'
 
 export function UserMenu() {
   const { data: session } = useSession()
   const userId = session?.user.id ?? ''
   const { data: profile } = useProfile(userId)
+  const isPlatformAdmin = useIsPlatformAdmin()
   const queryClient = useQueryClient()
   const signOutMutation = useMutation({
     mutationFn: signOut,
@@ -58,6 +60,14 @@ export function UserMenu() {
             Mi perfil
           </Link>
         </DropdownMenuItem>
+        {isPlatformAdmin && (
+          <DropdownMenuItem asChild>
+            <Link to="/admin">
+              <HugeiconsIcon icon={Shield01Icon} />
+              Administración
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => signOutMutation.mutate()}

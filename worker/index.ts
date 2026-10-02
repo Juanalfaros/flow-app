@@ -1,4 +1,5 @@
 import { handleInvite } from './invite'
+import { handleAdminInviteOwner } from './admin-invite'
 import { handleDeleteAccount } from './account'
 import { handleAccountExport } from './account-export'
 import { handleCalendarFeed } from './calendar'
@@ -111,6 +112,10 @@ export default {
     }
     if (url.pathname === '/api/push/public-key' && request.method === 'GET') {
       return handlePushPublicKey(env)
+    }
+
+    if (url.pathname === '/api/admin/invite-owner' && request.method === 'POST') {
+      return handleAdminInviteOwner(request, env)
     }
 
     if (url.pathname === '/api/attachments') {

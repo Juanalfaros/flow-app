@@ -149,6 +149,10 @@ export const acceptPendingInvitationsQueryOptions = () =>
     queryFn: async () => {
       const { error } = await supabase.rpc('accept_pending_invitations')
       if (error) throw error
+      // Invitaciones para crear un workspace propio (0095_platform_admin.sql).
+      // Va después y por separado: no depende de la anterior.
+      const { error: ownerError } = await supabase.rpc('accept_owner_invitations')
+      if (ownerError) throw ownerError
       return true
     },
     staleTime: Infinity,

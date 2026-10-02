@@ -17,7 +17,7 @@ export function OnboardingForm() {
       onSubmit={(e) => {
         e.preventDefault()
         mutation.mutate(name, {
-          onError: () => toast.error('No se pudo crear el workspace. Prueba de nuevo.'),
+          onError: (e) => toast.error(e instanceof Error && e.message ? e.message : 'No se pudo crear el workspace. Prueba de nuevo.'),
         })
       }}
     >
