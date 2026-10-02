@@ -172,6 +172,9 @@ interface AccentPreset {
 }
 
 const DARK_INK = '#080501'
+// Retirados el 2026-10-02 (comentados abajo) por parecerse a los de marca:
+// Turquesa≈Verde menta, Violeta≈Púrpura, Rosa≈Magenta, Ámbar≈Amarillo,
+// Verde≈Verde menta. 0097_accent_palette_cleanup.sql migra las cuentas.
 export const ACCENT_PRESETS: Record<string, AccentPreset> = {
   // Amarillo
   '#E1C401': {
@@ -193,36 +196,36 @@ export const ACCENT_PRESETS: Record<string, AccentPreset> = {
     light: { accent: '#811DBC', hover: '#6A169E', foreground: '#FFFFFF', solid: '#811DBC', solidHover: '#6A169E' },
     dark: { accent: '#811DBC', hover: '#6A169E', foreground: '#FFFFFF', solid: '#811DBC', solidHover: '#6A169E', textAccent: '#AD6CD3' },
   },
-  // Turquesa — el default hasta 2026-10-02 (valores originales de index.css)
-  '#28BDB0': {
-    light: { accent: '#28BDB0', hover: '#1E988E', foreground: '#062421', solid: '#28BDB0', solidHover: '#1E988E', textOnBg: '#16746C' },
-    dark: { accent: '#40E0D0', hover: '#55E6D8', foreground: '#062421', solid: '#40E0D0', solidHover: '#55E6D8' },
-  },
+  // // Turquesa — el default hasta 2026-10-02 (valores originales de index.css)
+  // '#28BDB0': {
+  //   light: { accent: '#28BDB0', hover: '#1E988E', foreground: '#062421', solid: '#28BDB0', solidHover: '#1E988E', textOnBg: '#16746C' },
+  //   dark: { accent: '#40E0D0', hover: '#55E6D8', foreground: '#062421', solid: '#40E0D0', solidHover: '#55E6D8' },
+  // },
   // Azul
   '#3B82F6': {
     light: { accent: '#3B82F6', hover: '#2E64BE', foreground: '#FFFFFF', solid: '#3472D8', solidHover: '#2E64BE', textOnBg: '#2F67C2' },
     dark: { accent: '#5391F7', hover: '#2E64BE', foreground: '#FFFFFF', solid: '#3472D8', solidHover: '#2E64BE' },
   },
-  // Violeta
-  '#8B5CF6': {
-    light: { accent: '#8B5CF6', hover: '#754DD0', foreground: '#FFFFFF', solid: '#8558EC', solidHover: '#754DD0', textOnBg: '#764ED1' },
-    dark: { accent: '#9970F7', hover: '#754DD0', foreground: '#FFFFFF', solid: '#8558EC', solidHover: '#754DD0' },
-  },
-  // Rosa
-  '#EC4899': {
-    light: { accent: '#EC4899', hover: '#B43775', foreground: '#FFFFFF', solid: '#CD3F85', solidHover: '#B43775', textOnBg: '#B33774' },
-    dark: { accent: '#EE5EA5', hover: '#B43775', foreground: '#FFFFFF', solid: '#CD3F85', solidHover: '#B43775' },
-  },
-  // Ámbar
-  '#F59E0B': {
-    light: { accent: '#F59E0B', hover: '#D88B0A', foreground: DARK_INK, solid: '#F59E0B', solidHover: '#D88B0A', textOnBg: '#956007' },
-    dark: { accent: '#F6AA28', hover: '#F7B442', foreground: DARK_INK, solid: '#F6AA28', solidHover: '#F7B442' },
-  },
-  // Verde
-  '#10B981': {
-    light: { accent: '#10B981', hover: '#0EA372', foreground: DARK_INK, solid: '#10B981', solidHover: '#0EA372', textOnBg: '#0B7C56' },
-    dark: { accent: '#2DC190', hover: '#46C89D', foreground: DARK_INK, solid: '#2DC190', solidHover: '#46C89D' },
-  },
+  // // Violeta
+  // '#8B5CF6': {
+  //   light: { accent: '#8B5CF6', hover: '#754DD0', foreground: '#FFFFFF', solid: '#8558EC', solidHover: '#754DD0', textOnBg: '#764ED1' },
+  //   dark: { accent: '#9970F7', hover: '#754DD0', foreground: '#FFFFFF', solid: '#8558EC', solidHover: '#754DD0' },
+  // },
+  // // Rosa
+  // '#EC4899': {
+  //   light: { accent: '#EC4899', hover: '#B43775', foreground: '#FFFFFF', solid: '#CD3F85', solidHover: '#B43775', textOnBg: '#B33774' },
+  //   dark: { accent: '#EE5EA5', hover: '#B43775', foreground: '#FFFFFF', solid: '#CD3F85', solidHover: '#B43775' },
+  // },
+  // // Ámbar
+  // '#F59E0B': {
+  //   light: { accent: '#F59E0B', hover: '#D88B0A', foreground: DARK_INK, solid: '#F59E0B', solidHover: '#D88B0A', textOnBg: '#956007' },
+  //   dark: { accent: '#F6AA28', hover: '#F7B442', foreground: DARK_INK, solid: '#F6AA28', solidHover: '#F7B442' },
+  // },
+  // // Verde
+  // '#10B981': {
+  //   light: { accent: '#10B981', hover: '#0EA372', foreground: DARK_INK, solid: '#10B981', solidHover: '#0EA372', textOnBg: '#0B7C56' },
+  //   dark: { accent: '#2DC190', hover: '#46C89D', foreground: DARK_INK, solid: '#2DC190', solidHover: '#46C89D' },
+  // },
 }
 
 export interface AccentDarkPalette {

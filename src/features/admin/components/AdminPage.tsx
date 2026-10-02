@@ -153,7 +153,7 @@ export function AdminPage() {
         {data.invitations.length > 0 && (
           <ul className="divide-y divide-border rounded-md border border-border text-sm">
             {data.invitations.map((i) => (
-              <li key={i.id} className="flex items-center justify-between gap-3 px-3 py-2">
+              <li key={i.id} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 py-2">
                 <span className="truncate">{i.email}</span>
                 <span className="text-xs text-text-muted">pendiente · hasta {i.max_workspaces} workspace(s)</span>
                 <Button variant="ghost" size="sm" onClick={() => revoke.mutate(i.id)}>
@@ -180,7 +180,7 @@ export function AdminPage() {
         ) : (
           <ul className="divide-y divide-border rounded-md border border-border text-sm">
             {data.owners.map((o) => (
-              <li key={o.user_id} className="flex items-center justify-between gap-3 px-3 py-2">
+              <li key={o.user_id} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 py-2">
                 <span className="truncate">{o.email}</span>
                 <span className="flex items-center gap-2 text-xs text-text-muted">
                   {o.workspaces} creado(s) · máximo
@@ -193,7 +193,30 @@ export function AdminPage() {
       </Section>
 
       <Section title="Workspaces">
-        <div className="overflow-x-auto rounded-md border border-border">
+        {/* Móvil: una tarjeta por workspace. La tabla de 7 columnas se salía de
+            la pantalla (se cortaba en "Tareas"). */}
+        <ul className="flex flex-col gap-2 md:hidden">
+          {data.workspaces.map((w) => (
+            <li key={w.id} className="rounded-md border border-border p-3 text-sm">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{w.name}</p>
+                  <p className="truncate text-xs text-text-secondary">{w.owner_email ?? '—'}</p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setToDelete(w)}>
+                  Eliminar
+                </Button>
+              </div>
+              <dl className="mt-2 grid grid-cols-4 gap-2 text-center text-xs">
+                <div><dt className="text-text-muted">Miembros</dt><dd className="font-medium">{w.members}</dd></div>
+                <div><dt className="text-text-muted">Tareas</dt><dd className="font-medium">{w.tasks}</dd></div>
+                <div><dt className="text-text-muted">Adjuntos</dt><dd className="font-medium">{formatBytes(w.storage_bytes)}</dd></div>
+                <div><dt className="text-text-muted">Creado</dt><dd className="font-medium">{new Date(w.created_at).toLocaleDateString('es-CL')}</dd></div>
+              </dl>
+            </li>
+          ))}
+        </ul>
+        <div className="hidden overflow-x-auto rounded-md border border-border md:block">
           <table className="w-full text-left text-sm">
             <thead className="text-xs text-text-muted">
               <tr>

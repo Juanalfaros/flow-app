@@ -118,6 +118,8 @@ function EspaciosPage() {
               expandedIds={expandedIds}
               onToggleExpand={toggleExpanded}
               defaultViewRoute={defaultViewRoute}
+              // Si ningún espacio tiene hijos no hay chevrones: no dejar 36px vacíos a la izquierda.
+              reserveToggle={visibleRoots.some((r) => r.children.length > 0)}
             />
           ))
         )}
@@ -183,9 +185,12 @@ function SpaceRow({
   expandedIds,
   onToggleExpand,
   defaultViewRoute,
+  reserveToggle = true,
 }: {
   node: TreeNode
   depth: number
+  /** Deja el hueco del chevron aunque este nodo no tenga hijos, para alinear con los hermanos que sí. */
+  reserveToggle?: boolean
   expandedIds: Set<string>
   onToggleExpand: (id: string) => void
   defaultViewRoute: ReturnType<typeof defaultViewToRoute>
@@ -211,9 +216,9 @@ function SpaceRow({
           >
             <HugeiconsIcon icon={ChevronRightIcon} className={cn('size-4 transition-transform', expanded && 'rotate-90')} />
           </button>
-        ) : (
+        ) : reserveToggle ? (
           <span className="size-9 shrink-0" />
-        )}
+        ) : null}
         <Link
           to="/f/$folderId"
           params={{ folderId: node.id }}

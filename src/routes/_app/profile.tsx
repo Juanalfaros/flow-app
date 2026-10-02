@@ -258,6 +258,11 @@ function ProfilePage() {
               <button
                 key={item.id}
                 type="button"
+                // Sin esto, entrar a `?tab=preferences` dejaba la pestaña activa
+                // cortada contra el borde derecho, fuera de la vista.
+                ref={(el) => {
+                  if (el && tab === item.id) el.scrollIntoView({ inline: 'center', block: 'nearest' })
+                }}
                 onClick={() => setTab(item.id)}
                 className={cn(
                   'shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors',
@@ -1473,12 +1478,14 @@ const ACCENT_SWATCHES: { hex: string; label: string }[] = [
   { hex: '#811DBC', label: 'Púrpura' },
   { hex: '#E1C401', label: 'Amarillo' },
   { hex: '#00D69C', label: 'Verde menta' },
-  { hex: '#28BDB0', label: 'Turquesa' }, // era el default hasta 2026-10-02
   { hex: '#3B82F6', label: 'Azul' },
-  { hex: '#8B5CF6', label: 'Violeta' },
-  { hex: '#EC4899', label: 'Rosa' },
-  { hex: '#F59E0B', label: 'Ámbar' },
-  { hex: '#10B981', label: 'Verde' },
+  // Retirados el 2026-10-02 por parecerse demasiado a los de marca (0097 migra
+  // las cuentas que los tenían). Se dejan comentados para poder volver:
+  // { hex: '#28BDB0', label: 'Turquesa' }, // ≈ Verde menta
+  // { hex: '#8B5CF6', label: 'Violeta' }, // ≈ Púrpura
+  // { hex: '#EC4899', label: 'Rosa' }, // ≈ Magenta
+  // { hex: '#F59E0B', label: 'Ámbar' }, // ≈ Amarillo
+  // { hex: '#10B981', label: 'Verde' }, // ≈ Verde menta
 ]
 
 // Los tres valores que acepta el CHECK de la columna
@@ -1583,7 +1590,7 @@ function PreferencesSection({ userId, profile }: { userId: string; profile: Prof
         </div>
 
         <Field label="Color de acento">
-          <div className="flex flex-wrap gap-2.5">
+          <div className="grid grid-cols-5 gap-1.5 sm:flex sm:flex-wrap sm:gap-2.5">
             {ACCENT_SWATCHES.map((swatch) => {
               const selected = profile.accent_color === swatch.hex
               return (
@@ -1593,18 +1600,19 @@ function PreferencesSection({ userId, profile }: { userId: string; profile: Prof
                   aria-pressed={selected}
                   onClick={() => set('accent_color', swatch.hex)}
                   className={cn(
-                    'flex flex-col items-center gap-1 text-[11px]',
+                    // min-h-14: objetivo táctil >= 44px también con el texto en 2 líneas
+                    'flex min-h-14 min-w-0 flex-col items-center justify-start gap-1.5 rounded-lg px-1 py-1.5 text-[11px] leading-tight transition-colors active:bg-surface-alt sm:min-h-0 sm:px-0 sm:py-0',
                     selected ? 'text-text' : 'text-text-muted',
                   )}
                 >
                   <span
                     className={cn(
-                      'block size-6 rounded-full border-2 border-surface ring-1 ring-border',
+                      'block size-8 rounded-full border-2 border-surface ring-1 ring-border sm:size-6',
                       selected && 'ring-2 ring-text',
                     )}
                     style={{ backgroundColor: swatch.hex }}
                   />
-                  {swatch.label}
+                  <span className="max-w-full text-center break-words">{swatch.label}</span>
                 </button>
               )
             })}
