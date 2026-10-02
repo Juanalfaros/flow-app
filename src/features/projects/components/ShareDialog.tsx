@@ -140,7 +140,7 @@ export function ShareDialog({ workspaceId, projectId, projectName }: ShareDialog
             <Button
               type="submit"
               disabled={inviteMutation.isPending}
-              className="bg-accent text-accent-foreground hover:bg-accent/90"
+              className="bg-accent-solid text-accent-foreground hover:bg-accent-solid/90"
             >
               <HugeiconsIcon icon={UserAdd01Icon} />
               {inviteMutation.isPending ? 'Invitando…' : 'Invitar'}

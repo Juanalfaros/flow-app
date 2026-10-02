@@ -129,17 +129,26 @@ export interface AccentPalette {
    * móvil) aun con la app en tema claro. */
   accentTextOnDark: string
   accentForeground: string
+  /** Relleno sólido con texto encima (botones, avatares) y su hover. */
+  accentSolid: string
+  accentSolidHover: string
 }
 
 // Hover de marca: el magenta por defecto trae un par definido por diseño
 // (#FF0055 → #D6004C) que no es exactamente lo que daría `darken(0.12)`
 // (#E0004B). Cualquier otro color sigue la fórmula.
 const BRAND_HOVER: Record<string, string> = { '#FF0055': '#D6004C' }
+// Relleno sólido con texto: el magenta de marca no da 4.5:1 con blanco (3.9:1),
+// así que ese color usa #D6004C (5.3:1) y su hover #B3003F. Cualquier otro
+// color se usa tal cual.
+const BRAND_SOLID: Record<string, [string, string]> = { '#FF0055': ['#D6004C', '#B3003F'] }
 
 export function deriveAccentPalette(hex: string): AccentPalette {
   return {
     accent: hex,
     accentHover: BRAND_HOVER[hex.toUpperCase()] ?? darken(hex, 0.12),
+    accentSolid: (BRAND_SOLID[hex.toUpperCase()] ?? [hex, darken(hex, 0.12)])[0],
+    accentSolidHover: (BRAND_SOLID[hex.toUpperCase()] ?? [hex, darken(hex, 0.12)])[1],
     accentSoft: lighten(hex, 0.85),
     accentSoftOnDark: rgba(hex, 0.18),
     accentTextOnBg: darken(hex, 0.35),

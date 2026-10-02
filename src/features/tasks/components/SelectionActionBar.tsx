@@ -45,7 +45,7 @@ export function SelectionActionBar({
           teléfono de 390px el contenido pedía ~400px y se cortaba por los
           dos lados (R-05). */}
       <div className="flex max-w-full flex-wrap items-center gap-2 rounded-panel border border-border bg-surface p-2 shadow-panel">
-        <span className="rounded-full bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground tabular-nums">
+        <span className="rounded-full bg-accent-solid px-2.5 py-1 text-xs font-medium text-accent-foreground tabular-nums">
           {selectedIds.size} seleccionada{selectedIds.size === 1 ? '' : 's'}
         </span>
 

@@ -60,6 +60,14 @@
      según su luminancia (src/lib/color.ts) — de ahí que también tenga
      fallback. */
   --accent-foreground: var(--accent-user-foreground, #FFFFFF); /* antes #062421 (teal casi negro) */
+  /* Relleno SÓLIDO con texto encima (botones, avatares, chips de calendario,
+     panel de login). Blanco sobre #FF0055 da 3.9:1, bajo el 4.5:1 de AA para
+     texto normal; #D6004C da 5.3:1. Por eso los rellenos con texto usan este
+     token y `--accent` (#FF0055) queda para texto/íconos/líneas sobre fondo
+     oscuro (4.7:1) y rellenos sin texto. Con un acento elegido por la persona
+     el sólido es ese mismo color (ver deriveAccentPalette). */
+  --accent-solid: var(--accent-user-solid, #D6004C);
+  --accent-solid-hover: var(--accent-user-solid-hover, #B3003F);
 
   /* Ámbar — acento secundario */
   --accent-2: #F59E0B;
@@ -194,6 +202,8 @@ body {
   --color-text-muted: var(--text-muted);
 
   --color-accent-hover: var(--accent-hover);
+  --color-accent-solid: var(--accent-solid);
+  --color-accent-solid-hover: var(--accent-solid-hover);
   --color-accent-soft: var(--accent-soft);
   --color-accent-text-on-bg: var(--accent-text-on-bg);
 
@@ -332,6 +342,8 @@ body {
      Ver AccentPalette en src/lib/color.ts. */
   --accent-text-on-bg: var(--accent-user-text-on-dark, #FF73A2); /* antes #A8F2EC */
   --accent-foreground: var(--accent-user-foreground, #FFFFFF); /* antes #062421 */
+  --accent-solid: var(--accent-user-solid, #D6004C);
+  --accent-solid-hover: var(--accent-user-solid-hover, #B3003F);
 
   --accent-2: #FBBF24;
   --accent-2-hover: #FDE68A;

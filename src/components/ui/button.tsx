@@ -16,7 +16,7 @@ const buttonVariants = cva(
         // de acceso, Crear workspace, Guardar contraseña, Aprobar...)
         // salía en el --primary neutro (negro/blanco), no en el color de
         // marca. Reportado por el usuario.
-        default: "bg-accent text-accent-foreground hover:bg-accent-hover",
+        default: "bg-accent-solid text-accent-foreground hover:bg-accent-solid-hover",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:

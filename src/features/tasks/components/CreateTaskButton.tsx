@@ -113,7 +113,7 @@ export function CreateTaskButton({ projectId, statusId }: CreateTaskButtonProps)
         <Button
           size="sm"
           disabled={!statusId}
-          className={cn('bg-accent text-accent-foreground hover:bg-accent/90 aria-expanded:bg-accent/90')}
+          className={cn('bg-accent-solid text-accent-foreground hover:bg-accent-solid/90 aria-expanded:bg-accent-solid/90')}
         >
           <HugeiconsIcon icon={PlusSignIcon} />
           Tarea

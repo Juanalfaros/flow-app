@@ -67,7 +67,7 @@ export function SidebarRail({ activeModule, onSelectModule, collapsed, onNavigat
         disabled
         aria-disabled="true"
         title="Cambiar de workspace (próximamente)"
-        className="mb-1.5 flex size-7 shrink-0 cursor-default items-center justify-center rounded-md bg-accent text-xs font-semibold text-accent-foreground opacity-90"
+        className="mb-1.5 flex size-7 shrink-0 cursor-default items-center justify-center rounded-md bg-accent-solid text-xs font-semibold text-accent-foreground opacity-90"
       >
         {workspace?.name?.slice(0, 1).toUpperCase() ?? '?'}
       </button>

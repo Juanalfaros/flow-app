@@ -126,7 +126,7 @@ function WeekColumn({
         <span
           className={cn(
             'flex size-5 items-center justify-center rounded-full text-xs',
-            isToday(day) && 'bg-accent font-medium text-accent-foreground',
+            isToday(day) && 'bg-accent-solid font-medium text-accent-foreground',
           )}
         >
           {format(day, 'd')}

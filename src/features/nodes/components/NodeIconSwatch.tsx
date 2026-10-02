@@ -37,7 +37,7 @@ export function NodeIconSwatch({ name, appearance, size = 'sm', className }: Nod
   }
 
   return (
-    <span className={cn(base, 'bg-accent font-semibold text-accent-foreground')}>
+    <span className={cn(base, 'bg-accent-solid font-semibold text-accent-foreground')}>
       {name.slice(0, 1).toUpperCase()}
     </span>
   )

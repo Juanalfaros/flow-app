@@ -14,10 +14,10 @@ import type { Env } from './index'
 const BUTTON_BY_TYPE: Record<string, { label: string; color: string } | null> = {
   due_reminder: { label: 'Completar o reprogramar', color: '#E11D48' },
   removed_from_workspace: null,
-  role_changed: { label: 'Abrir Flow', color: '#FF0055' },
-  welcome: { label: 'Entrar a Flow', color: '#FF0055' },
+  role_changed: { label: 'Abrir Flow', color: '#D6004C' },
+  welcome: { label: 'Entrar a Flow', color: '#D6004C' },
 }
-const DEFAULT_BUTTON = { label: 'Ver en Flow', color: '#FF0055' }
+const DEFAULT_BUTTON = { label: 'Ver en Flow', color: '#D6004C' }
 
 // `body` interpola `describe()` (notification-payload.ts), que a su vez
 // interpola valores que controla cualquier miembro del workspace —

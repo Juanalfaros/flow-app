@@ -16,14 +16,14 @@ export function SplitScreenLayout({ tagline, children }: SplitScreenLayoutProps)
   return (
     <div className="grid min-h-svh grid-cols-1 bg-bg text-text md:grid-cols-2">
       <div
-        className="relative hidden flex-col justify-between overflow-hidden bg-accent bg-cover bg-center p-10 md:flex"
+        className="relative hidden flex-col justify-between overflow-hidden bg-accent-solid bg-cover bg-center p-10 md:flex"
         style={backgroundUrl ? { backgroundImage: `url(${backgroundUrl})` } : undefined}
       >
         {/* Overlay solo cuando hay foto de fondo: sin ella el texto ya
             tiene el contraste pensado contra `--accent` sólido; con una
             imagen cualquiera, ese contraste ya no está garantizado. */}
         {backgroundUrl && <div className="absolute inset-0 bg-black/35" aria-hidden />}
-        <span className="relative font-mono text-sm tracking-wide text-accent-foreground/70">Flow</span>
+        <span className="relative font-mono text-sm tracking-wide text-accent-foreground">Flow</span>
         <p className="relative max-w-xs text-2xl leading-snug font-medium text-accent-foreground">{tagline}</p>
       </div>
       <div className="flex items-center justify-center p-6">

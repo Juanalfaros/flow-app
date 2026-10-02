@@ -183,7 +183,7 @@ function MonthWeekRow({
             // proyectos con tareas de varios días).
             style={{ gridColumn: `${item.startCol + 1} / span ${item.endCol - item.startCol + 1}`, gridRow: laneIndex + 2 }}
             className={cn(
-              'mx-0.5 mb-0.5 flex h-4 min-w-0 items-center truncate bg-accent px-1.5 text-left text-[10px] font-medium text-accent-foreground',
+              'mx-0.5 mb-0.5 flex h-4 min-w-0 items-center truncate bg-accent-solid px-1.5 text-left text-[10px] font-medium text-accent-foreground',
               item.continuesBefore ? 'rounded-l-none' : 'rounded-l-full',
               item.continuesAfter ? 'rounded-r-none' : 'rounded-r-full',
             )}
@@ -240,7 +240,7 @@ function MonthCell({
           className={cn(
             'flex size-5 items-center justify-center rounded-full text-xs',
             outsideMonth ? 'text-text-muted' : 'text-text',
-            isToday(day) && 'bg-accent font-medium text-accent-foreground',
+            isToday(day) && 'bg-accent-solid font-medium text-accent-foreground',
           )}
         >
           {format(day, 'd')}

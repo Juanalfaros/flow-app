@@ -146,7 +146,7 @@ export function InviteMembersDialog({ workspaceId, trigger }: InviteMembersDialo
             <Button
               type="submit"
               disabled={mutation.isPending || valid.length === 0 || invalid.length > 0}
-              className="bg-accent text-accent-foreground hover:bg-accent/90"
+              className="bg-accent-solid text-accent-foreground hover:bg-accent-solid/90"
             >
               <HugeiconsIcon icon={UserAdd01Icon} />
               {mutation.isPending ? 'Enviando…' : 'Enviar invitación'}

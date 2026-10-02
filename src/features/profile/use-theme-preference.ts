@@ -53,6 +53,8 @@ export function useThemePreference() {
       '--accent-user-text-on-bg',
       '--accent-user-text-on-dark',
       '--accent-user-foreground',
+      '--accent-user-solid',
+      '--accent-user-solid-hover',
     ] as const
 
     // Volver a "sin color elegido" tiene que LIMPIAR, no dejar el anterior
@@ -71,6 +73,8 @@ export function useThemePreference() {
     root.setProperty('--accent-user-text-on-bg', palette.accentTextOnBg)
     root.setProperty('--accent-user-text-on-dark', palette.accentTextOnDark)
     root.setProperty('--accent-user-foreground', palette.accentForeground)
+    root.setProperty('--accent-user-solid', palette.accentSolid)
+    root.setProperty('--accent-user-solid-hover', palette.accentSolidHover)
   }, [profile?.accent_color])
 
   // Fondo del riel (0090_profile_rail_style.sql). Va aparte del efecto de

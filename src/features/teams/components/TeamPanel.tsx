@@ -58,7 +58,7 @@ export function TeamPanel({ teamId, onClose }: { teamId: string; onClose: () => 
       <div className="flex items-start gap-3 p-5 pb-4">
         <span
           className="flex size-10 shrink-0 items-center justify-center rounded-lg text-sm font-semibold text-accent-foreground"
-          style={{ backgroundColor: team.color ?? 'var(--accent)' }}
+          style={{ backgroundColor: team.color ?? 'var(--accent-solid)' }}
         >
           {team.name.slice(0, 1).toUpperCase()}
         </span>

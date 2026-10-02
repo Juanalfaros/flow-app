@@ -110,7 +110,7 @@ function TeamCard({
       <div className="flex items-center gap-2">
         <span
           className="flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-semibold text-accent-foreground"
-          style={{ backgroundColor: team.color ?? 'var(--accent)' }}
+          style={{ backgroundColor: team.color ?? 'var(--accent-solid)' }}
         >
           {team.name.slice(0, 1).toUpperCase()}
         </span>

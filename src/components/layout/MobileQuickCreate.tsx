@@ -101,7 +101,7 @@ export function MobileQuickCreate() {
           type="button"
           onClick={() => setOpen(true)}
           aria-label="Nueva tarea"
-          className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 grid size-14 place-items-center rounded-full bg-accent text-accent-foreground shadow-lg transition-transform active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 md:hidden"
+          className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 grid size-14 place-items-center rounded-full bg-accent-solid text-accent-foreground shadow-lg transition-transform active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 md:hidden"
         >
           <HugeiconsIcon icon={PlusSignIcon} className="size-6" />
         </button>
