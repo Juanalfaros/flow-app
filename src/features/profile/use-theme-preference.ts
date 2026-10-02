@@ -55,6 +55,11 @@ export function useThemePreference() {
       '--accent-user-foreground',
       '--accent-user-solid',
       '--accent-user-solid-hover',
+      '--accent-user-dark',
+      '--accent-user-hover-dark',
+      '--accent-user-foreground-dark',
+      '--accent-user-solid-dark',
+      '--accent-user-solid-hover-dark',
     ] as const
 
     // Volver a "sin color elegido" tiene que LIMPIAR, no dejar el anterior
@@ -75,6 +80,12 @@ export function useThemePreference() {
     root.setProperty('--accent-user-foreground', palette.accentForeground)
     root.setProperty('--accent-user-solid', palette.accentSolid)
     root.setProperty('--accent-user-solid-hover', palette.accentSolidHover)
+    // Modo oscuro / .dark-scope (ver index.css).
+    root.setProperty('--accent-user-dark', palette.dark.accent)
+    root.setProperty('--accent-user-hover-dark', palette.dark.accentHover)
+    root.setProperty('--accent-user-foreground-dark', palette.dark.accentForeground)
+    root.setProperty('--accent-user-solid-dark', palette.dark.accentSolid)
+    root.setProperty('--accent-user-solid-hover-dark', palette.dark.accentSolidHover)
   }, [profile?.accent_color])
 
   // Fondo del riel (0090_profile_rail_style.sql). Va aparte del efecto de

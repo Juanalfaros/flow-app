@@ -330,8 +330,8 @@ body {
   /* Mismo `var(--accent-user-*, <default>)` que el bloque claro — ver el
      comentario largo allá arriba. Este selector incluye `.dark-scope`, que
      es justamente donde el acento elegido no llegaba. */
-  --accent: var(--accent-user, #FF0055); /* antes #40E0D0 */
-  --accent-hover: var(--accent-user-hover, #D6004C); /* antes #55E6D8 */
+  --accent: var(--accent-user-dark, var(--accent-user, #FF0055)); /* antes #40E0D0 */
+  --accent-hover: var(--accent-user-hover-dark, var(--accent-user-hover, #D6004C)); /* antes #55E6D8 */
   /* `-soft-on-dark`, no `-soft`: el segundo lo deriva
      `deriveAccentPalette` mezclando 85% BLANCO, correcto sobre una página
      clara y un bloque casi blanco sobre grafito — se vería en el riel del
@@ -341,9 +341,9 @@ body {
      para texto sobre una página clara — sobre grafito quedaba ilegible.
      Ver AccentPalette en src/lib/color.ts. */
   --accent-text-on-bg: var(--accent-user-text-on-dark, #FF73A2); /* antes #A8F2EC */
-  --accent-foreground: var(--accent-user-foreground, #FFFFFF); /* antes #062421 */
-  --accent-solid: var(--accent-user-solid, #D6004C);
-  --accent-solid-hover: var(--accent-user-solid-hover, #B3003F);
+  --accent-foreground: var(--accent-user-foreground-dark, var(--accent-user-foreground, #FFFFFF)); /* antes #062421 */
+  --accent-solid: var(--accent-user-solid-dark, var(--accent-user-solid, #D6004C));
+  --accent-solid-hover: var(--accent-user-solid-hover-dark, var(--accent-user-solid-hover, #B3003F));
 
   --accent-2: #FBBF24;
   --accent-2-hover: #FDE68A;

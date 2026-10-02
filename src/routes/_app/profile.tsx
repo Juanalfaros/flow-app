@@ -1463,10 +1463,16 @@ const TASK_VIEW_MODE_OPTIONS: { value: TaskViewMode; label: string }[] = [
   { value: 'full', label: 'Página completa' },
 ]
 
+// Cada color tiene su par claro/oscuro (hover, texto sobre el relleno, variante
+// legible como texto) en ACCENT_PRESETS, src/lib/color.ts. Los cuatro primeros
+// son los de marca.
 // Con nombre, no solo el hex: un círculo de color sin etiqueta obliga a
 // adivinar (y no se puede describir por lectores de pantalla).
 const ACCENT_SWATCHES: { hex: string; label: string }[] = [
   { hex: '#FF0055', label: 'Magenta' },
+  { hex: '#811DBC', label: 'Púrpura' },
+  { hex: '#E1C401', label: 'Amarillo' },
+  { hex: '#00D69C', label: 'Verde menta' },
   { hex: '#28BDB0', label: 'Turquesa' }, // era el default hasta 2026-10-02
   { hex: '#3B82F6', label: 'Azul' },
   { hex: '#8B5CF6', label: 'Violeta' },

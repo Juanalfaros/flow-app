@@ -132,29 +132,160 @@ export interface AccentPalette {
   /** Relleno sólido con texto encima (botones, avatares) y su hover. */
   accentSolid: string
   accentSolidHover: string
+  /** Variante para modo oscuro (y para los subárboles `.dark-scope`). */
+  dark: AccentDarkPalette
 }
 
-// Hover de marca: el magenta por defecto trae un par definido por diseño
-// (#FF0055 → #D6004C) que no es exactamente lo que daría `darken(0.12)`
-// (#E0004B). Cualquier otro color sigue la fórmula.
-const BRAND_HOVER: Record<string, string> = { '#FF0055': '#D6004C' }
-// Relleno sólido con texto: el magenta de marca no da 4.5:1 con blanco (3.9:1),
-// así que ese color usa #D6004C (5.3:1) y su hover #B3003F. Cualquier otro
-// color se usa tal cual.
-const BRAND_SOLID: Record<string, [string, string]> = { '#FF0055': ['#D6004C', '#B3003F'] }
+// ---------------------------------------------------------------------------
+// Acentos de marca (2026-10-02). Cuatro colores con variantes propias en modo
+// claro y oscuro; se identifican por su hex "principal claro", que es lo que
+// se guarda en `profiles.accent_color`.
+//
+// Qué significa cada campo:
+//   accent      color de marca para texto/íconos/líneas/rellenos SIN texto.
+//   hover       su hover.
+//   foreground  texto sobre un relleno sólido.
+//   solid(+Hover) relleno sólido CON texto encima. Casi siempre es el propio
+//               color; el magenta usa #D6004C porque blanco sobre #FF0055 da
+//               3.9:1 y sobre #D6004C 5.3:1 (AA).
+//   textOnBg    (solo claro) acento como TEXTO sobre fondo claro. Amarillo y
+//               menta son demasiado claros para eso (1.7–1.9:1), así que
+//               tienen una versión más oscura.
+//   textAccent  (solo oscuro) el acento usado como texto sobre grafito. El
+//               púrpura #811DBC da 2.5:1 sobre #151515; esta versión da 5.1:1.
+// Todos los colores que se pueden elegir en Ajustes están acá, cada uno con su
+// par claro/oscuro. Un hex fuera de la tabla (no se puede elegir desde la UI,
+// pero podría venir de datos antiguos) sigue la fórmula genérica, igual en
+// ambos modos.
+interface PresetMode {
+  accent: string
+  hover: string
+  foreground: string
+  solid: string
+  solidHover: string
+  textOnBg?: string
+  textAccent?: string
+}
+interface AccentPreset {
+  light: PresetMode
+  dark: PresetMode
+}
+
+const DARK_INK = '#080501'
+export const ACCENT_PRESETS: Record<string, AccentPreset> = {
+  // Amarillo
+  '#E1C401': {
+    light: { accent: '#E1C401', hover: '#B8A30E', foreground: DARK_INK, solid: '#E1C401', solidHover: '#B8A30E', textOnBg: '#7C6C01' },
+    dark: { accent: '#EFD319', hover: '#FACC15', foreground: DARK_INK, solid: '#EFD319', solidHover: '#FACC15' },
+  },
+  // Verde menta
+  '#00D69C': {
+    light: { accent: '#00D69C', hover: '#0A9470', foreground: DARK_INK, solid: '#00D69C', solidHover: '#0A9470', textOnBg: '#007656' },
+    dark: { accent: '#19EFB5', hover: '#15C999', foreground: DARK_INK, solid: '#19EFB5', solidHover: '#15C999' },
+  },
+  // Magenta (el default de la app)
+  '#FF0055': {
+    light: { accent: '#FF0055', hover: '#D6004C', foreground: '#FFFFFF', solid: '#D6004C', solidHover: '#B3003F' },
+    dark: { accent: '#FF0055', hover: '#D6004C', foreground: '#FFFFFF', solid: '#D6004C', solidHover: '#B3003F' },
+  },
+  // Púrpura
+  '#811DBC': {
+    light: { accent: '#811DBC', hover: '#6A169E', foreground: '#FFFFFF', solid: '#811DBC', solidHover: '#6A169E' },
+    dark: { accent: '#811DBC', hover: '#6A169E', foreground: '#FFFFFF', solid: '#811DBC', solidHover: '#6A169E', textAccent: '#AD6CD3' },
+  },
+  // Turquesa — el default hasta 2026-10-02 (valores originales de index.css)
+  '#28BDB0': {
+    light: { accent: '#28BDB0', hover: '#1E988E', foreground: '#062421', solid: '#28BDB0', solidHover: '#1E988E', textOnBg: '#16746C' },
+    dark: { accent: '#40E0D0', hover: '#55E6D8', foreground: '#062421', solid: '#40E0D0', solidHover: '#55E6D8' },
+  },
+  // Azul
+  '#3B82F6': {
+    light: { accent: '#3B82F6', hover: '#2E64BE', foreground: '#FFFFFF', solid: '#3472D8', solidHover: '#2E64BE', textOnBg: '#2F67C2' },
+    dark: { accent: '#5391F7', hover: '#2E64BE', foreground: '#FFFFFF', solid: '#3472D8', solidHover: '#2E64BE' },
+  },
+  // Violeta
+  '#8B5CF6': {
+    light: { accent: '#8B5CF6', hover: '#754DD0', foreground: '#FFFFFF', solid: '#8558EC', solidHover: '#754DD0', textOnBg: '#764ED1' },
+    dark: { accent: '#9970F7', hover: '#754DD0', foreground: '#FFFFFF', solid: '#8558EC', solidHover: '#754DD0' },
+  },
+  // Rosa
+  '#EC4899': {
+    light: { accent: '#EC4899', hover: '#B43775', foreground: '#FFFFFF', solid: '#CD3F85', solidHover: '#B43775', textOnBg: '#B33774' },
+    dark: { accent: '#EE5EA5', hover: '#B43775', foreground: '#FFFFFF', solid: '#CD3F85', solidHover: '#B43775' },
+  },
+  // Ámbar
+  '#F59E0B': {
+    light: { accent: '#F59E0B', hover: '#D88B0A', foreground: DARK_INK, solid: '#F59E0B', solidHover: '#D88B0A', textOnBg: '#956007' },
+    dark: { accent: '#F6AA28', hover: '#F7B442', foreground: DARK_INK, solid: '#F6AA28', solidHover: '#F7B442' },
+  },
+  // Verde
+  '#10B981': {
+    light: { accent: '#10B981', hover: '#0EA372', foreground: DARK_INK, solid: '#10B981', solidHover: '#0EA372', textOnBg: '#0B7C56' },
+    dark: { accent: '#2DC190', hover: '#46C89D', foreground: DARK_INK, solid: '#2DC190', solidHover: '#46C89D' },
+  },
+}
+
+export interface AccentDarkPalette {
+  accent: string
+  accentHover: string
+  accentForeground: string
+  accentSolid: string
+  accentSolidHover: string
+  accentSoftOnDark: string
+  accentTextOnDark: string
+}
 
 export function deriveAccentPalette(hex: string): AccentPalette {
+  const preset = ACCENT_PRESETS[hex.toUpperCase()]
+  if (preset) {
+    const { light: l, dark: d } = preset
+    const darkText = d.textAccent ?? d.accent
+    return {
+      accent: l.accent,
+      accentHover: l.hover,
+      accentSoft: lighten(l.accent, 0.85),
+      accentSoftOnDark: rgba(d.accent, 0.18),
+      accentTextOnBg: l.textOnBg ?? darken(l.accent, 0.35),
+      accentTextOnDark: lighten(darkText, 0.45),
+      accentForeground: l.foreground,
+      accentSolid: l.solid,
+      accentSolidHover: l.solidHover,
+      dark: {
+        // `accent` en oscuro es la versión legible como texto; el relleno
+        // exacto de la paleta va en `solid`.
+        accent: darkText,
+        accentHover: d.hover,
+        accentForeground: d.foreground,
+        accentSolid: d.solid,
+        accentSolidHover: d.solidHover,
+        accentSoftOnDark: rgba(d.accent, 0.18),
+        accentTextOnDark: lighten(darkText, 0.45),
+      },
+    }
+  }
+  const hover = darken(hex, 0.12)
+  const foreground = isLight(hex) ? '#0A0A0A' : '#FFFFFF'
+  const textOnDark = lighten(hex, 0.45)
   return {
     accent: hex,
-    accentHover: BRAND_HOVER[hex.toUpperCase()] ?? darken(hex, 0.12),
-    accentSolid: (BRAND_SOLID[hex.toUpperCase()] ?? [hex, darken(hex, 0.12)])[0],
-    accentSolidHover: (BRAND_SOLID[hex.toUpperCase()] ?? [hex, darken(hex, 0.12)])[1],
+    accentHover: hover,
     accentSoft: lighten(hex, 0.85),
     accentSoftOnDark: rgba(hex, 0.18),
     accentTextOnBg: darken(hex, 0.35),
     // 0.45 reproduce la proporción de los defaults: #40E0D0 aclarado así da
-    // ≈#96EEE5, casi el #A8F2EC que el diseño usa en modo oscuro.
-    accentTextOnDark: lighten(hex, 0.45),
-    accentForeground: isLight(hex) ? '#0A0A0A' : '#FFFFFF',
+    // ≈#96EEE5, casi el #A8F2EC que el diseño usaba en modo oscuro.
+    accentTextOnDark: textOnDark,
+    accentForeground: foreground,
+    accentSolid: hex,
+    accentSolidHover: hover,
+    dark: {
+      accent: hex,
+      accentHover: hover,
+      accentForeground: foreground,
+      accentSolid: hex,
+      accentSolidHover: hover,
+      accentSoftOnDark: rgba(hex, 0.18),
+      accentTextOnDark: textOnDark,
+    },
   }
 }
